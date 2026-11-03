@@ -1,0 +1,44 @@
+name: Translation
+description: A new UI language, or a fix to an existing one.
+labels: ["i18n"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Every UI string lives in a catalog: `src/see_your_agents/web/i18n/<lang>.json` and `src/see_your_agents/features/<id>/i18n/<lang>.json`, with English as the source. The recipe is in docs/i18n.md, "How to add a language". A partial translation works: missing keys show English. All current UI text, in every language, was written by Claude Opus 5.5: corrections and better names are very welcome.
+  - type: input
+    id: language
+    attributes:
+      label: Language
+      description: Its name and tag (`ll` or `ll-RR`).
+      placeholder: Português (Brasil), pt-BR
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind
+      options:
+        - A new language
+        - Wrong or awkward wording in an existing language
+        - A missing string (English shows instead)
+    validations:
+      required: true
+  - type: textarea
+    id: catalogs
+    attributes:
+      label: Catalog files
+      description: Which catalogs you will translate or which keys are wrong, e.g. `web/i18n/de.json` or `features/todo/i18n/fr.json`, `todo.morning.button`.
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: For a fix, the current text and your suggestion. A screenshot helps when a string overflows.
+  - type: checkboxes
+    id: help
+    attributes:
+      label: Contribution
+      options:
+        - label: I will open the pull request myself

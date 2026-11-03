@@ -1,4 +1,5 @@
-"""What Codex threads wait for, from the daemon's JSON-RPC (docs/codex-cli-notes.md, «The daemon's RPC»).
+"""What Codex threads wait for, from the daemon's JSON-RPC (docs/notes/codex-cli-notes.md,
+«The daemon's RPC»).
 
 A thread the shared app-server daemon hosts (a TUI is only its client) may wait on an approval or an answer.
 Nothing on disk says so; only the daemon does: `Thread.status = active{activeFlags: [waitingOnApproval |

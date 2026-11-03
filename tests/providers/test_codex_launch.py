@@ -17,7 +17,7 @@ LEVELS = [{"effort": e, "description": "…"} for e in ("low", "medium", "high")
 
 
 def model(slug, name, visibility="list", levels=LEVELS):
-    """One entry of models_cache.json's `models`, in the shape docs/codex-cli-notes.md records."""
+    """One entry of models_cache.json's `models`, in the shape docs/notes/codex-cli-notes.md records."""
     return {
         "slug": slug,
         "display_name": name,

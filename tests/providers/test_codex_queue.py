@@ -115,7 +115,8 @@ def test_a_busy_thread_is_refused_its_message_would_wait_past_any_confirmation(c
 
 
 def test_a_thread_whose_last_turn_was_aborted_is_sent_to_the_terminal(codex):
-    """Codex resumes such a thread from the queue but starts no turn (docs/codex-cli-notes.md, «Send»)."""
+    """Codex resumes such a thread from the queue but starts no turn (docs/notes/codex-cli-notes.md,
+    «Send»)."""
     record = {"session_id": TID, "cwd": "/w", "last_turn_aborted": True}
 
     found = codex_queue.route(Session.of(record, None))

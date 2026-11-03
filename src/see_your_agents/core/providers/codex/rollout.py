@@ -2,7 +2,7 @@
 flat archived_sessions/ that `codex archive` moves it to.
 
 Each line is {timestamp, type, payload}. The format is internal to Codex and changes between releases, so an
-unknown line is skipped and a missing field stays empty. What counts (docs/codex-cli-notes.md):
+unknown line is skipped and a missing field stays empty. What counts (docs/notes/codex-cli-notes.md):
 - identity, cwd, branch: the FIRST session_meta; a resumed file repeats it, a fork or a subagent replays its
   parent's after it (`Replay` below);
 - prompts: event_msg/item_completed with a UserMessage, or event_msg/user_message (CLIs that wrote no items),

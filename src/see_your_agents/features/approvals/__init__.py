@@ -1,7 +1,7 @@
 """Approvals: answer Claude Code's permission prompts, questions and plans from the page.
 
 A PermissionRequest hook (hook.py, installed by `sya hooks install`) hands each prompt to the dashboard while
-the terminal shows its own dialog; the first answer wins. See docs/claude-hooks-notes.md.
+the terminal shows its own dialog; the first answer wins. See docs/notes/claude-hooks-notes.md.
 """
 
 from pathlib import Path

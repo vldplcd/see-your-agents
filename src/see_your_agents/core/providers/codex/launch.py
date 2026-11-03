@@ -1,7 +1,7 @@
 """Starting a Codex session from the New session dialog: a detached `codex exec --json` on the
 first task.
 
-Codex has no --bg and no name flag (docs/codex-cli-notes.md, «Launch»). The dashboard starts
+Codex has no --bg and no name flag (docs/notes/codex-cli-notes.md, «Launch»). The dashboard starts
 `codex exec --json -C <cwd> -s <sandbox> [-m model] [-c model_reasoning_effort="…"] [--worktree] -- <prompt>`
 in a session of its own, stdout to a log under cache_dir()/runs, and reads the thread id from its first
 `thread.started` line. The run ends with that first turn; the thread stays, and the chat continues it through

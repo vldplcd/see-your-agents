@@ -4,7 +4,7 @@ The dashboard is a host, a set of features and a set of providers. The host hand
 
 A provider is an agent program whose sessions show on the board (Claude Code and Codex CLI). Everything that knows about the program lives in `core/providers/<id>/` behind one contract. A new provider is also a folder and a line in the registry: [docs/providers.md](providers.md).
 
-The recipe for an agent is the [`add-feature`](../.claude/skills/add-feature/SKILL.md) skill. This document covers what it stands on.
+The step-by-step recipe is [adding-a-feature.md](adding-a-feature.md) for people and the [`add-feature`](../.claude/skills/add-feature/SKILL.md) skill for agents. This document covers what they stand on.
 
 ## Layers
 
@@ -253,6 +253,8 @@ The render tick (`render()` in `app.js`): counters and the tab icon → features
 
 ## Security: what must not break
 
+The invariants a change must keep. The threat model, the guarantees and the residual risks, for users and reviewers: [security.md](security.md).
+
 - The server listens only on `127.0.0.1`.
 - Every GET checks `Host` (`127.0.0.1:<port>` or `localhost:<port>`): transcripts are private; this is the protection against DNS rebinding.
 - Every page POST is checked three ways: `Origin` is the page itself, the `X-SYA: 1` header (from a foreign site it triggers a CORS preflight), and — unless the path is in the open allowlist — the paired browser's `X-SYA-Pair` secret (see "Browser pairing"). POSTs change the world (launch a session, write a group, accept a build), and any local process forges Origin and `X-SYA`, so the paired browser is what tells the dashboard's own tab apart. The open allowlist is `/api/pair*` (the bootstrap) and the routes a feature declares in `open_posts` (the approvals hook's HMAC-signed routes); `/mcp` has its own tokens and is handled before this guard. `tests/app/test_layers.py` pins the features with a POST handler and the open set, so a new POST route fails the suite until it is classified (paired by default, or opened with a reason). GET stays open. Body length 0..32 MB (`body_length`): a negative length would hang the read. A feature gets an already checked request; from the page, send POST through `postJson`, which sets the headers; an unpaired POST gets 403 `{unpaired}` and the page offers "Pair this browser".
@@ -266,7 +268,7 @@ The render tick (`render()` in `app.js`): counters and the tab icon → features
 - A new session starts only through the provider: a feature and a supervisor tool call `options()`, `trusted()`, `start(LaunchRequest)` and `fork(session, …)` ("Fork") and do not build the program's argv themselves. The folder rule is shared: `project_dir` in `core/providers/base.py`; the rest below is about Claude (`core/providers/claude/launch.py`). The folder exists, is inside the home folder, is not the home folder itself and has no hidden parts; model, effort and permission mode come from the `OPTIONS` allowlists (`bypassPermissions` and `dontAsk` are not in them), each flag is `--flag=value`; "Default" passes no flag, and the session gets the user's `defaultMode`, whatever it is. The path is checked against the home folder before any disk access; a relative path is not accepted. The name is one line of printable characters, by default the folder name; if a live session carries it (its `address`, that is, a name not from `nameSource: "auto"`), `-2`, `-3`… is appended. The environment is `core.env.clean_env`: an explicit list `OWN_ENV` (the server's venv and its `bin/` in `PATH`, the watchdog, `UV_RUN_RECURSION_DEPTH`, the parent Claude session's variables), not a prefix: `CLAUDE_CODE_USE_BEDROCK` and the like stay. The courier is started with the same `clean_env`. From `~/.claude.json` only `projects[<path>].hasTrustDialogAccepted` is read, from `~/.claude/settings.json` only `model`. The builder, with its own `--settings` and `--resume`, calls one level lower, `run()` from `claude/launch.py`. Codex (`core/providers/codex/launch.py`) is `codex exec` in the background with the same folder and environment rules: model and effort only from `models_cache.json` (visible models and their levels), sandbox `workspace-write` or `read-only`; the server rejects `danger-full-access`, and `--dangerously-bypass-approvals-and-sandbox` is never passed. A message to Codex goes only through `codex queue` (`codex/queue.py`), and only where Codex will start a turn right away; delivery is confirmed by a turn in the rollout, not by the exit code.
 - Text to a live session when it has no terminal route (tmux, VS Code), and any signed message (`Message.sender`: a group, "Morning review"), goes only through `Provider.send`; for Claude this is the courier `core/providers/claude/courier.py`, `deliver(to, text, summary, sender)`: `to` is the session name from `LiveSession.name` (as in `ListAgents`), `sender` is how the recipient sees the sender. The courier compares what was sent with the original and returns `Delivery(ok, msg_id, error, params)` (`error`: a catalog key, `problem()` the `SendError`); by `msg_id` the recipient's reply is found in its `messages_in[].reply`. Send only text the user wrote themselves or explicitly clicked to send; delivery blocks for 3–10 s, run it in a thread. This is how Claude's `peer` route works (`core/providers/claude/routes.py`): sender `Dashboard` (transcripts from before agent-facing text was English say «Дашборд»; the chat shows both as the user's own), the call in the request thread, text only (files are rejected), the session counts as busy for that time (`running_reply`), and while it is awaiting a permission the text is not sent. A named background session (`claude --bg`) gets the same route without takeover; its process is owned by the `claude` daemon (an abandoned job has no pid in `claude agents` at all), the courier finds it by name in a fresh list, so there is no pid check against the registry for it; when it is awaiting a permission, the reason names `claude attach <id>`.
 - Secrets from MCP configs do not reach the page (`features/tools/toolbox.py` strips them).
-- **Permissions from the dashboard** (`features/approvals`, facts in [claude-hooks-notes.md](claude-hooks-notes.md)). Only sessions of programs with `Cap.PERMISSION_WAIT` (Claude Code, whose hook `sya hooks install` installs): Codex lacks this capability, so its session gets no request: none can be created, shown or decided.
+- **Permissions from the dashboard** (`features/approvals`, facts in [claude-hooks-notes.md](notes/claude-hooks-notes.md)). Only sessions of programs with `Cap.PERMISSION_WAIT` (Claude Code, whose hook `sya hooks install` installs): Codex lacks this capability, so its session gets no request: none can be created, shown or decided.
   - *Who creates a request and whom the hook trusts.* The Claude Code hook (`hook.py`) calls `POST /api/approvals/hello`, `ask`, `<id>/wait`, `<id>/withdraw`. Besides the host checks (Host, Origin, `X-SYA`), every request is signed with the token from `config_dir()/approvals-token` (0600): a fresh nonce, a timestamp (±60 s), HMAC-SHA256 of the path and the body; a repeated nonce is rejected. The reply is signed with the same token and bound to the nonce and the path; the hook verifies the signature (`compare_digest`) before printing anything. The token itself never goes over the network. Anyone can take the port while the dashboard is off or restarting: without the token such a process gets neither a request (`hello` checks the dashboard before the hook hands over the tool input) nor an "allow". No file, no requests. For the hook, an unsigned reply is a failure like any other.
   - *Who decides.* Only a paired browser: `POST /api/approvals/<id>/decide` passes the host checks for POST (Origin, `X-SYA`) and requires the pairing secret in the `X-SYA-Pair` header, only on `127.0.0.1` (`page_may_decide` → `app.pairing.paired`, see "Browser pairing" below). Without it: 403 "This browser isn’t paired". The hook token is neither needed nor sufficient. A foreign web page cannot send either Origin or its own headers without a preflight, which the server does not answer, and the secret lives in the sessionStorage of the dashboard's own tab. There is no MCP tool for permissions: an agent does not approve agents' calls.
   - *What a decision can do.* Only "yes" or "no" for the call this hook process was started for: the decision is bound to the id, and the id to the process. The hook does not take tool input from the dashboard: "Allow" is a bare `allow`; for AskUserQuestion the hook itself adds `answers` to its own input, and only if the keys are exactly its questions; for ExitPlanMode it returns its own input unchanged and `setMode: default`. The hook does not send `updatedPermissions` ("remember forever"). An allow approves the whole input, so the page draws each of its fields (`view`: the body and all other fields by name and value, `dangerouslyDisableSandbox: true` as a red line). If anything is cut or a field is not drawn (`complete: false`), there is no "Allow" either on the page or on the server (409), only "Deny" and advice to answer in the terminal.
@@ -283,7 +285,7 @@ The render tick (`render()` in `app.js`): counters and the tab icon → features
 - Everything that changes the world outside the dashboard (launching agents, sending to sessions) is `scope="control"` and `confirm=True`. There are no "merge code" buttons in MCP and there never will be.
 - A session that a feature launched with its own flags (the supervisor) is continued by the dashboard only with those flags: a `resume` turn takes the flags from `Feature.resume_args` through the chat's `setup`, and without it refuses. In a `-p` turn there is nobody to ask for confirmation: a tool from the `ask` rules is rejected («Claude requested permissions to use …, but you haven't granted it yet»), not run.
 - Builds (`features/builder`) touch the user's checkout only through page buttons. "Accept" merges the commit on which the checks passed (`checked_sha`), and only into the branch the build started from; if the branch has moved ahead, the checks run again. A build that changes paths ignored in the checkout (`git check-ignore`) or `.claude/` outside `.claude/skills/` is not merged by "Accept": the merge would overwrite them silently, and the builder can do `git add -f` without asking. "Roll back" also works only on the build's branch; a detached HEAD does not qualify.
-- **The builder's sandbox** (`features/builder/agent.py`, verified facts in [claude-sandbox-notes.md](claude-sandbox-notes.md)). The builder runs tests it wrote itself, so the ALLOW and DENY rules cover only the commands it types, not the code inside a test. Every Bash command of the builder session runs in Claude Code's own sandbox (Seatbelt), switched on by the build's settings file `config_dir()/builder/build-<name>.json` (`--settings`, on start and on `--resume`), not `~/.claude/settings.json`.
+- **The builder's sandbox** (`features/builder/agent.py`, verified facts in [claude-sandbox-notes.md](notes/claude-sandbox-notes.md)). The builder runs tests it wrote itself, so the ALLOW and DENY rules cover only the commands it types, not the code inside a test. Every Bash command of the builder session runs in Claude Code's own sandbox (Seatbelt), switched on by the build's settings file `config_dir()/builder/build-<name>.json` (`--settings`, on start and on `--resume`), not `~/.claude/settings.json`.
   - *What it guarantees.* Writes only to the build's worktree and its `/private/tmp/sya-build-<8 hex>` folder (every rule names resolved paths: Seatbelt matches canonical paths, and `/tmp` is a link to `/private/tmp`; this is `CLAUDE_CODE_TMPDIR`, and the sandbox's TMPDIR is `<it>/claude-<uid>`, not the `/tmp/claude-<uid>` every session shares; the path must fit 44 bytes). In the shared `.git`, write-denied: the checkout's HEAD, `packed-refs`, every branch but `build/<name>` (each with its `.lock`), `refs/tags`, `refs/stash`, and the other worktrees' admin dirs. `config_dir()` is read-denied. No network: `deniedDomains: ["*"]` overrides even the user's `WebFetch(domain:…)` rules, and `strictAllowlist` refuses rather than prompts. `allowUnsandboxedCommands: false`: `dangerouslyDisableSandbox` is ignored, so there is no way out even with permission. `failIfUnavailable`: no sandbox, no builder. `autoAllowBashIfSandboxed: false`: ALLOW and DENY still decide what prompts.
   - *The dashboard's own checks and the preview.* `run_checks` (ruff, pytest after the builder's turn) and "Preview" run the build's code too, outside the builder's session, so each runs under `/usr/bin/sandbox-exec` with a generated profile (`agent.profile`): the same writable worktree and temp root, `config_dir()` read-denied, no network but loopback, local bind open (the tests and the preview need their own servers) and the dashboard's own port denied (one `(remote ip "localhost:<port>")` rule covers 127.0.0.1, localhost and ::1). Fail closed: without `sandbox-exec` the checks fail and the preview refuses, never a fall back to running the code unconfined. So does a missing dashboard port (a `localhost:0` rule would close nothing). Seatbelt does not nest, so the suite's own `sandbox-exec` tests skip under the checks and in the builder's sandbox (`needs_seatbelt`), as the `ps` tests do (`needs_ps`); they run in a plain `uv run pytest`. The preview's config and cache move under the temp root; the parent copies the user's config into it, so the sandboxed child never reads `config_dir()`.
   - *uv.* The sandbox has no network and cannot write `~/.cache/uv`, so `create()` runs `uv sync --locked` in the fresh worktree before the builder starts (from the checkout's commit, with the user's network and cache); inside, the builder and the checks run uv with `UV_OFFLINE=1` and `UV_NO_CACHE=1`. `uv sync` never runs again outside the sandbox: a sync builds the project, and the builder's `pyproject.toml` could run code. A build cannot add dependencies.
@@ -291,159 +293,9 @@ The render tick (`render()` in `app.js`): counters and the tab icon → features
 
 ## How to add a feature
 
-The full example is `tests/fixtures/hello`: a GET and POST route, an MCP tool, a subcommand, a card field, a supervisor prompt fragment, a right dock, a line on the card and a session panel section. `tests/app/test_feature.py` runs it through the real server. In the package the imports are relative (`from ...app.feature import Feature`), in the copy in `tests/` they are absolute.
-
-1. **Folder.** `src/see_your_agents/features/<id>/` with `__init__.py`, code in `<id>.py`, the page in `web/<id>.js` and `web/<id>.css`, the strings in `i18n/en.json` and `i18n/ru.json` ([i18n.md](i18n.md)).
-
-2. **Code** (`<id>.py`):
-
-   ```python
-   """Who said hello to the agents from the page."""
-
-   from __future__ import annotations
-
-   import json
-   import threading
-   from http import HTTPStatus
-
-   from ...app.mcp import Tool
-   from ...app.replies import Reply, json_reply
-   from ...i18n import Problem
-
-   ROUTE = "/api/hello"
-   _lock = threading.Lock()
-   names: list[str] = []
-
-
-   def handle_get(app, path: str, query: dict[str, str]) -> Reply | None:
-       if path != ROUTE:
-           return None  # not mine: the host answers 404
-       with _lock:
-           return json_reply({"names": list(names)})
-
-
-   def handle_post(app, path: str, body: bytes, headers) -> Reply | None:
-       if path != ROUTE:
-           return None
-       try:
-           name = json.loads(body).get("name")
-       except (ValueError, AttributeError):
-           name = None
-       if not isinstance(name, str) or not 0 < len(name.strip()) <= 40:
-           raise Problem("hello.bad_name", HTTPStatus.BAD_REQUEST, max=40)  # {"error": ...} in the page's language
-       with _lock:
-           names.append(name.strip())
-           return json_reply({"names": list(names)})
-
-
-   def card_fields(rec: dict, live) -> dict:
-       return {"hello_words": len((rec.get("title") or "").split())}
-
-
-   def _names(app, args: dict) -> dict:
-       with _lock:
-           return {"names": list(names)}
-
-
-   TOOL = Tool("hello_names", "read", "Who said hello to the agents.", {}, (), _names)  # for an agent: English
-   ```
-
-3. **Manifest** (`__init__.py`):
-
-   ```python
-   """Hello: who said hello to the agents."""
-
-   from pathlib import Path
-
-   from ...app.feature import Feature
-   from . import hello
-
-   FEATURE = Feature(
-       id="hello",
-       folder=Path(__file__).parent,
-       handle_get=hello.handle_get,
-       handle_post=hello.handle_post,
-       tools=(hello.TOOL,),
-       scripts=("hello.js",),
-       styles=("hello.css",),
-       card_extra=hello.card_fields,
-       supervisor_prompt="supervisor.md",  # if the supervisor should know about the tool
-   )
-   ```
-
-4. **Page** (`web/hello.js`):
-
-   ```js
-   // Hello: a right dock with who said hello, a line on every board card, a drawer section.
-   (() => {
-     let names = [];
-     const list = (root) => {
-       root.querySelector(".hello-names").innerHTML = names.map((n) => `<li>${esc(n)}</li>`).join("");
-     };
-     function draw(root) {  // every tick while the dock is open: build once, then only update
-       if (!root.firstElementChild) {
-         root.innerHTML = `<div class="dock-title"><h2>${t("hello.title")}</h2><button class="ghost dock-x" type="button">×</button></div>
-           <form class="hello-form"><input name="name" maxlength="40"><button class="ghost">${t("hello.say")}</button></form>
-           <ul class="hello-names"></ul>`;
-         root.querySelector("form").onsubmit = async (e) => {
-           e.preventDefault();
-           const r = await postJson("/api/hello", { name: e.target.elements.name.value });
-           if (r.ok) { names = r.data.names; e.target.reset(); render(); }  // the shell's render(): the list and the badge
-         };
-         getJson("/api/hello").then((d) => { names = d?.names || names; render(); });
-       }
-       list(root);
-     }
-     SYA.feature({
-       id: "hello",
-       right: { button: t("hello.title"), title: t("hello.dock_title"), label: t("hello.title"), icon: "<svg …>",
-         render: draw, badge: () => names.length || "" },
-       card: (c) => `<p class="hello-line">${t("hello.card", { n: c.hello_words })}</p>`,
-       drawer: (d) => `<section><h4>${t("hello.title")}</h4><p>${t("hello.drawer", { n: d.hello_words })}</p></section>`,
-     });
-   })();
-   ```
-
-   `web/hello.css`: only `.hello*` classes and tokens.
-
-   **Strings** (`i18n/en.json`; `i18n/ru.json` has the same keys, `few` and `many` forms included):
-
-   ```json
-   {
-     "hello.title": "Hello",
-     "hello.dock_title": "Example feature: who said hello",
-     "hello.say": "Say hello",
-     "hello.card": { "one": "{n} word in the title", "other": "{n} words in the title" },
-     "hello.drawer": { "one": "The title has {n} word.", "other": "The title has {n} words." },
-     "hello.bad_name": "name: a non-empty string of up to {max} characters"
-   }
-   ```
-
-5. **Registry.** One line in `features/__init__.py`: the import and `hello.FEATURE` in `FEATURES`. The position in the list sets the order of assets, tabs and tools.
-
-6. **Tests**: `tests/features/test_hello.py`. The environment is already isolated: `tests/conftest.py` points `CLAUDE_CONFIG_DIR`, `SYA_CONFIG_DIR` and `SYA_CACHE_DIR` at the test's temporary folders. An app without `~/.claude`: `FakeApp(records, live)` from `tests/fakes.py`; the records get `provider: "claude"` (`no_processes(monkeypatch)` turns off process polling). How to start a server and send requests as the page does: `tests/app/test_feature.py`. Test your own behavior, not the host's work: route, validation, storage, tool.
-
-7. **Checks and a screenshot**: the section below.
-
-## Checks
-
-```bash
-uv run ruff check src tests && uv run ruff format --check src tests && uv run pytest -q
-```
-
-Live check: your own server on a free port (the user's dashboard on 8765 holds the DuckDB file; a second server takes an in-memory index, which is fine) with temporary settings folders, then screenshots of the states you need and the console errors through `scripts/shoot.mjs`:
-
-```bash
-SYA_CONFIG_DIR=$(mktemp -d) SYA_CACHE_DIR=$(mktemp -d) uv run sya serve --no-open --port 8771 &
-cat > /tmp/shots.json <<'JSON'
-[{"name": "board", "hash": "#board"},
- {"name": "mine-dark", "hash": "#board", "prefs": {"skin": "dispatch", "theme": "dark"},
-  "storage": {"sya.dock.right": {"open": true}}, "eval": "document.querySelector('.mine-x')?.click()"}]
-JSON
-node scripts/shoot.mjs http://127.0.0.1:8771 /tmp/shots /tmp/shots.json   # exit code 1 = errors in the console
-```
-
-The script sets `localStorage` before the page starts (a write from the open page races with the page's own saves), and navigating to the same address with a different `#` does not reload the page, so the script goes through `about:blank` every time. Open the screenshots and look at them yourself: the three styles (`buro`, `konstruktor`, `dispatch`) and the dark theme. Stop the server afterwards. Do not touch port 8765, `~/.claude` or the real `~/.config/see-your-agents`.
+The walkthrough, with the `hello` example's code, the checks and the live check with `scripts/shoot.mjs`, is
+[adding-a-feature.md](adding-a-feature.md). The full example is `tests/fixtures/hello`, and
+`tests/app/test_feature.py` runs it through the real server.
 
 ## Tests
 
@@ -452,7 +304,7 @@ tests/
   conftest.py        each test has its own CLAUDE_CONFIG_DIR, CODEX_HOME, SYA_CONFIG_DIR, SYA_CACHE_DIR; Claude routes
                      are off, the mr feature does not see glab; sleeper is a process that is certainly not claude
   fakes.py           FakeApp and FakeIndex: records and live sessions in memory
-  fixtures/hello/    the example feature from this document
+  fixtures/hello/    the example feature from adding-a-feature.md
   fixtures/glab/     glab api replies (MR, approvals, discussions) for the mr feature
   codex_rollouts.py, codex_daemon.py   synthetic Codex rollouts and recorded daemon frames
   core/              index (with fake providers), cards, environment

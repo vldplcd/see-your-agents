@@ -1,10 +1,10 @@
 """Claude Code's PermissionRequest hook: hand the prompt to the dashboard and print its answer.
 
 Claude Code shows its dialog and runs this hook at the same time, and the first answer wins
-(docs/claude-hooks-notes.md). So the hook only adds a second place to answer: on any failure (no dashboard,
-a bad reply, the wait is over) it exits 0 with no output, and the dialog stays the only one. It never takes
-a tool input from the dashboard: an allow is plain, and only AskUserQuestion gets answers, checked against
-its own questions.
+(docs/notes/claude-hooks-notes.md). So the hook only adds a second place to answer: on any failure (no
+dashboard, a bad reply, the wait is over) it exits 0 with no output, and the dialog stays the only one. It
+never takes a tool input from the dashboard: an allow is plain, and only AskUserQuestion gets answers,
+checked against its own questions.
 
 Whoever listens on the port is not trusted for being there: while the dashboard is down or restarting, any
 local process may bind it. Both sides prove they hold the token file without ever sending it. Each request

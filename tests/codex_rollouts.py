@@ -1,4 +1,5 @@
-"""Synthetic Codex rollouts in the shapes docs/codex-cli-notes.md records: no line comes from a real ~/.codex.
+"""Synthetic Codex rollouts in the shapes docs/notes/codex-cli-notes.md records: no line comes from a real
+~/.codex.
 
 Thread and turn ids are UUIDv7, so their first 48 bits are a time: `uid(minute)` makes ids that sort by it.
 """
@@ -123,7 +124,7 @@ def write(home: Path, thread: str, *entries, archived: bool = False) -> Path:
 def fork_rollout(parent: str, child: str, at: int) -> list[dict]:
     """A thread forked at minute `at`: its meta, then the parent's history replayed (meta, a finished turn,
     the turn still open at the fork; all stamped `at`), then its own turn. The shape of the subagent files
-    in docs/codex-cli-notes.md, whose replay rule a fork shares."""
+    in docs/notes/codex-cli-notes.md, whose replay rule a fork shares."""
     return [
         meta(child, at, forked_from_id=parent),
         meta(parent, at),

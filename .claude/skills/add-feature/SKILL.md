@@ -7,7 +7,7 @@ description: Add a feature (module) to the see-your-agents dashboard as a folder
 
 A feature is a folder `src/see_your_agents/features/<id>/` and one line in `features/__init__.py`. Do not edit the host (`app/`, `web/`) or other features.
 
-1. **Read** `docs/ARCHITECTURE.md`: "Layers", "Feature manifest", "Page", "Security". The complete example is `tests/fixtures/hello` and its test `tests/app/test_feature.py`; real features with data, `board_extra`, POST sub-paths and MCP tools are `features/todo` (right dock) and `features/groups` (a chat source).
+1. **Read** `docs/ARCHITECTURE.md`: "Layers", "Feature manifest", "Page", "Security"; the same recipe for people, with the example's code, is `docs/adding-a-feature.md`. The complete example is `tests/fixtures/hello` and its test `tests/app/test_feature.py`; real features with data, `board_extra`, POST sub-paths and MCP tools are `features/todo` (right dock) and `features/groups` (a chat source).
 
 2. **Branch.** Work in your own branch (`git branch --show-current`). Do not commit to `main` or merge into it.
 
@@ -30,9 +30,9 @@ A feature is a folder `src/see_your_agents/features/<id>/` and one line in `feat
    uv run ruff check src tests && uv run ruff format --check src tests && uv run pytest -q
    ```
 
-8. **Live.** Your own server on a free port (not 8765) with temporary `SYA_CONFIG_DIR` and `SYA_CACHE_DIR`; screenshots of the states you need with `node scripts/shoot.mjs` (ARCHITECTURE, "Checks"): style, theme, language (`"prefs": {"lang": "ru"}`), open docks, a click. Open the screenshots and make sure the feature shows in all three styles and the dark theme and nothing else moved; exit code 0 means a clean console. Stop the server.
+8. **Live.** Your own server on a free port (not 8765) with temporary `SYA_CONFIG_DIR` and `SYA_CACHE_DIR`; screenshots of the states you need with `node scripts/shoot.mjs` (`docs/adding-a-feature.md`, "Look at it live"): style, theme, language (`"prefs": {"lang": "ru"}`), open docks, a click. Open the screenshots and make sure the feature shows in all three styles and the dark theme and nothing else moved; exit code 0 means a clean console. Stop the server.
 
-9. **Docs.** Visible to the user: a line in the README ("What's on screen"). A new import exception: an entry in `docs/ARCHITECTURE.md` and in `tests/app/test_layers.py`.
+9. **Docs.** Visible to the user: a section or a line in `docs/user-guide.md`. New files in the config or cache folder: a row in `docs/configuration.md`. A new import exception: an entry in `docs/ARCHITECTURE.md` and in `tests/app/test_layers.py`.
 
 10. **Commit** to your branch: what the feature does and how it was checked. In the report: branch, files, the screenshot path.
 

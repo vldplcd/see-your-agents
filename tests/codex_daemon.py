@@ -1,7 +1,7 @@
 """The Codex daemon's control socket for tests: the frames a probe recorded from codex 0.166.0 (redacted), and
 a fake daemon that answers with them. Nothing here talks to a real daemon: the socket lives in a temp folder.
 
-Recorded on 2026-11-03 (docs/codex-cli-notes.md, «The daemon's RPC»): the handshake reply, initialize,
+Recorded on 2026-11-03 (docs/notes/codex-cli-notes.md, «The daemon's RPC»): the handshake reply, initialize,
 thread/loaded/list, thread/read of an idle thread, `active` with no flags while a turn ran, and the two
 notifications the daemon pushed unasked. `waitingOnApproval` and `waitingOnUserInput` are from the protocol's
 own schema (`codex app-server generate-json-schema`): no probe could put a daemon thread there without a TUI.

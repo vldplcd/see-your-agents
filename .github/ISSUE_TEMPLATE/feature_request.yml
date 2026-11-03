@@ -1,0 +1,44 @@
+name: Feature or module idea
+description: A new view, panel, card line, MCP tool, or support for another agent CLI.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A feature is a folder in `src/see_your_agents/features/` and one line in the registry (docs/adding-a-feature.md); a provider for another agent CLI is a folder in `core/providers/` (docs/providers.md). Agreeing on the shape here first saves rework.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind
+      options:
+        - A feature module (view, dock, card line, session panel section, MCP tool)
+        - A change to an existing feature
+        - A provider for another agent CLI
+        - Something else
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What you want to see or do on the dashboard, and why it matters to you.
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: The idea
+      description: How it could look and work. For a provider, where the program keeps its transcripts, how to tell what is running, and whether it can be messaged or launched without a person at a terminal.
+    validations:
+      required: true
+  - type: textarea
+    id: safety
+    attributes:
+      label: What it changes outside the dashboard
+      description: Does it write to sessions, start or stop processes, or write files outside the dashboard's own folders? Leave empty if it only reads.
+  - type: checkboxes
+    id: help
+    attributes:
+      label: Contribution
+      options:
+        - label: I would like to build it myself

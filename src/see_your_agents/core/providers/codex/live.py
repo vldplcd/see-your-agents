@@ -1,4 +1,4 @@
-"""Which Codex threads run now, from disk only (docs/codex-cli-notes.md, «Live state»).
+"""Which Codex threads run now, from disk only (docs/notes/codex-cli-notes.md, «Live state»).
 
 A thread is running while some process holds ~/.codex/thread-writer-locks/<thread id>.lock: the daemon (TUIs
 are its clients), a VS Code window's own app-server, `codex exec`, or a TUI started with --no-daemon. `lsof`

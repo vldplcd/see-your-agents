@@ -7,6 +7,11 @@ requires-python = ">=3.11"
 license = "MIT"
 dependencies = ["duckdb>=1.1"]
 
+[project.urls]
+Homepage = "https://github.com/vldplcd/see-your-agents"
+Issues = "https://github.com/vldplcd/see-your-agents/issues"
+Documentation = "https://github.com/vldplcd/see-your-agents/tree/main/docs"
+
 [project.scripts]
 sya = "see_your_agents.app.cli:main"
 

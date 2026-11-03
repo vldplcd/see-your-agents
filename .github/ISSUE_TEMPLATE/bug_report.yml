@@ -1,0 +1,76 @@
+name: Bug report
+description: Something on the dashboard does not work as the docs say.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. Security problems go through private reporting, not issues: see SECURITY.md.
+        Transcripts and logs are private: trim them to the lines that matter and remove names, paths, hosts and ticket keys you do not want to publish.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you saw, and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. uv run sya serve
+        2. Open a session's chat
+        3. ...
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: OS
+      placeholder: macOS 26.4, Ubuntu 24.04…
+    validations:
+      required: true
+  - type: input
+    id: python
+    attributes:
+      label: Python
+      description: "`uv run python --version`"
+      placeholder: "3.13.1"
+    validations:
+      required: true
+  - type: input
+    id: commit
+    attributes:
+      label: Commit
+      description: "`git rev-parse --short HEAD` in your clone"
+  - type: checkboxes
+    id: clis
+    attributes:
+      label: Agent CLIs involved
+      options:
+        - label: Claude Code
+        - label: Codex CLI
+        - label: Neither (the dashboard itself)
+  - type: input
+    id: versions
+    attributes:
+      label: CLI versions
+      description: "`claude --version`, `codex --version`, and `glab --version` for MR issues"
+      placeholder: "Claude Code 2.1.317, codex-cli 0.166.0"
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Browser
+      options:
+        - Not relevant
+        - Chrome
+        - Safari
+        - Firefox
+        - Other
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Output of the terminal running `sya serve`, errors from the browser console, the response of a failing request.
+      render: text

@@ -15,7 +15,7 @@ prompt asks for the Read, Grep and Glob tools instead.
 Its tests run code it wrote itself, so every Bash command it runs is confined by Claude Code's own sandbox
 (Seatbelt), switched on by its per-build settings file and for nothing else: writes only to its worktree and
 its own temp folder, no host but localhost, no way to ask out of the sandbox. Facts and limits:
-docs/claude-sandbox-notes.md.
+docs/notes/claude-sandbox-notes.md.
 """
 
 from __future__ import annotations

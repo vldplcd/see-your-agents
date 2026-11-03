@@ -275,7 +275,7 @@ def run_checks(build_id: str) -> None:
 
     `checked_sha` is the commit they run on: Accept merges that one and nothing the builder added later.
     They run the build's code, so they go under `sandbox-exec` like the builder's own Bash, but outside the
-    builder's own session; fail closed if it cannot. See docs/claude-sandbox-notes.md."""
+    builder's own session; fail closed if it cannot. See docs/notes/claude-sandbox-notes.md."""
     b = store.get(build_id)
     if b is None or b["status"] != CHECKING:
         return

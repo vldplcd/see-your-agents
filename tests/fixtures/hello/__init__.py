@@ -1,4 +1,4 @@
-"""Hello: the example feature of docs/ARCHITECTURE.md, run by tests/app/test_feature.py; not in FEATURES.
+"""Hello: the example feature of docs/adding-a-feature.md, run by tests/app/test_feature.py; not in FEATURES.
 
 Inside the package a feature imports the host relatively (`from ...app.feature import Feature`); this copy
 lives in tests/, so it uses the full name. Everything else is what a feature in features/hello/ would hold.

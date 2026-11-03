@@ -8,7 +8,8 @@ daemon starts the turn within a couple of seconds, and a failure then reaches th
 the text is still in it, instead of a pending bubble that silently expires. The turn's id is the send's
 `Sent.msg_id`: a group finds the answer under it in the digest's `queued_turns`.
 
-The route refuses before anything is queued where Codex would not run it (docs/codex-cli-notes.md, «Send»):
+The route refuses before anything is queued where Codex would not run it (docs/notes/codex-cli-notes.md,
+«Send»):
 - a thread another process holds — VS Code's app-server, a `codex --no-daemon` TUI, a `codex exec` run: the
   daemon cannot take its writer lock, and the message would stay in Codex's queue (an exec run even takes it
   on its way out and aborts it);

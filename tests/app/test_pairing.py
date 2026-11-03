@@ -20,6 +20,9 @@ from see_your_agents.app import pairing, server
 def quiet(monkeypatch):
     no_processes(monkeypatch)
     monkeypatch.setattr(pairing, "START_EVERY_S", 0)
+    # The flow is the same on every OS; only opening the browser is macOS's, and conftest records the tab
+    # instead. A configured opener makes pairing supported elsewhere too, so these tests run on Linux CI.
+    monkeypatch.setenv(pairing.OPENER_ENV, "unused")
 
 
 def serve(app):
