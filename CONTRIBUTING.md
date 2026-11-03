@@ -114,6 +114,12 @@ that way in new tests.
    checklist.
 4. CI must be green. A maintainer reviews; please answer review comments in their threads.
 
+A change users notice gets a line under "Unreleased" in [CHANGELOG.md](CHANGELOG.md).
+
+**Releases** (maintainers): bump `version` in `pyproject.toml`, move "Unreleased" to a new version section in the
+changelog, merge, then publish a GitHub release tagged `vX.Y.Z`. The `Release` workflow checks that the tag matches
+the version, builds the package and uploads it to PyPI through Trusted Publishing.
+
 **UI changes need screenshots**, light and dark, made with `scripts/shoot.mjs` against your development server
 ([adding-a-feature.md, "Look at it live"](docs/adding-a-feature.md#12-look-at-it-live)). Check the three styles
 ("Bureau", "Constructor", "Control room") and attach at least one light and one dark shot of what changed. The script

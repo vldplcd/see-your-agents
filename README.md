@@ -27,9 +27,16 @@ browser.
 ## Quick start
 
 ```bash
+uv tool install see-your-agents     # or: pipx install see-your-agents
+sya serve                           # http://127.0.0.1:8765, opens a browser tab
+sya ls                              # the same board in the terminal (--all adds the archive)
+```
+
+From a checkout, for development or for the builder (it works on the dashboard's own git repository):
+
+```bash
 git clone https://github.com/vldplcd/see-your-agents.git && cd see-your-agents
-uv run sya serve      # http://127.0.0.1:8765, opens a browser tab
-uv run sya ls         # the same board in the terminal (--all adds the archive)
+uv run sya serve
 ```
 
 The page is in English by default; Appearance → Language switches it. Optional one-time setup (the supervisor, the
@@ -54,7 +61,7 @@ The dashboard writes nothing to `~/.claude` or `~/.codex` itself, except through
 - [Security](docs/security.md): the threat model, guarantees and residual risks.
 - [Architecture](docs/ARCHITECTURE.md), [providers](docs/providers.md), [languages](docs/i18n.md),
   [adding a feature](docs/adding-a-feature.md).
-- The full index: [docs/README.md](docs/README.md).
+- The full index: [docs/README.md](docs/README.md). What changed between versions: [CHANGELOG.md](CHANGELOG.md).
 
 ## Contributing
 
