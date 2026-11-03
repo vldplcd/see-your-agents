@@ -1,0 +1,12 @@
+{
+  "hello.title": "Hello",
+  "hello.dock_title": "Example feature: who said hello",
+  "hello.hide": "Hide",
+  "hello.name": "Name",
+  "hello.name_placeholder": "Your name",
+  "hello.say": "Say hello",
+  "hello.nobody": "No one yet",
+  "hello.card": { "one": "{n} word in the title", "other": "{n} words in the title" },
+  "hello.drawer": { "one": "The title has {n} word.", "other": "The title has {n} words." },
+  "hello.bad_name": "name: a non-empty string of up to {max} characters"
+}

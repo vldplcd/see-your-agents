@@ -1,0 +1,17 @@
+{
+  "office.title": "办公室",
+  "office.no_project": "无项目",
+  "office.empty": "办公室里空无一人：没有活动的或最近的会话。",
+  "office.plan": "计划",
+  "office.tasks_above": "上方还有 {n} 项",
+  "office.tasks_below": "下方还有 {n} 项",
+  "office.recap": "总结",
+  "office.recap_at": "总结，{when}",
+  "office.agent_wrote": "代理最后发言",
+  "office.you_wrote": "你最后发言",
+  "office.you_wrote_at": "你最后发言，{when}",
+  "office.started": "{when}开始",
+  "office.prompts": { "other": "{n} 条提示词" },
+  "office.subagents": { "other": "{n} 个子代理" },
+  "office.plans": { "other": "{n} 个计划" }
+}

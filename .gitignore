@@ -1,0 +1,23 @@
+# Python: virtual environments, caches, built packages
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+dist/
+
+# the static demo (uv run python demo/build.py)
+demo/dist/
+
+# rendered visual plans
+*.plan.html
+
+# local Claude Code state and worktrees; the project's skills are shared
+.claude/*
+!.claude/skills/
+
+# local research material, not part of the repository
+docs/competitors/
+
+.DS_Store

@@ -1,0 +1,17 @@
+{
+  "office.title": "Oficina",
+  "office.no_project": "sin proyecto",
+  "office.empty": "La oficina está vacía: no hay sesiones activas ni recientes.",
+  "office.plan": "Plan",
+  "office.tasks_above": "{n} más arriba",
+  "office.tasks_below": "{n} más abajo",
+  "office.recap": "Resumen",
+  "office.recap_at": "Resumen, {when}",
+  "office.agent_wrote": "Lo último del agente",
+  "office.you_wrote": "Lo último que escribiste",
+  "office.you_wrote_at": "Lo último que escribiste, {when}",
+  "office.started": "Iniciada {when}",
+  "office.prompts": { "one": "{n} prompt", "many": "{n} de prompts", "other": "{n} prompts" },
+  "office.subagents": { "one": "{n} subagente", "many": "{n} de subagentes", "other": "{n} subagentes" },
+  "office.plans": { "one": "{n} plan", "many": "{n} de planes", "other": "{n} planes" }
+}

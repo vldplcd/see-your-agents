@@ -1,0 +1,135 @@
+/* Per-agent looks: the status ring, desk things, edit mode, the editor, the palette fieldset. See looks.js. */
+
+/* ---------- colours of the things on a desk; they follow the skin ---------- */
+:root {
+  --it-a: light-dark(#d9644a, #ee8068); --it-b: light-dark(#3f7fd0, #6aa2ee); --it-c: light-dark(#e9a52b, #f3bd4f);
+  --it-g: light-dark(#3f9b5f, #5fc27f); --it-y: light-dark(#f4c430, #ffd75e); --it-o: light-dark(#e8913a, #f2a65a);
+  --it-k: light-dark(#2a323b, #cfd6de); --it-w: #ffffff; --it-p: light-dark(#f08fa8, #f5a6bb);
+  --it-pot: light-dark(#c8734f, #d98462); --it-wood: light-dark(#a8794d, #b98a5a); --it-sky: light-dark(#9fd0ee, #5f94bd);
+  --it-lap: light-dark(#aeb7c1, #7d8794); --it-steam: light-dark(#9aa5b1, #c3ccd6); --it-coffee: #5b3a29;
+  --it-shadow: light-dark(rgb(20 30 40 / .22), rgb(0 0 0 / .45));
+}
+:root[data-skin="konstruktor"] {
+  --it-a: light-dark(#e3302b, #ff5c50); --it-b: light-dark(#1f4fd6, #5d88ff); --it-c: light-dark(#f5c211, #ffd43b);
+  --it-g: light-dark(#2b7a4b, #4fb97c); --it-y: light-dark(#f5c211, #ffd43b); --it-o: light-dark(#f08a1c, #ff9f36);
+  --it-k: light-dark(#555555, #f4f4f0); --it-pot: light-dark(#1a1a1a, #d8d8d2); --it-wood: light-dark(#1a1a1a, #d8d8d2);
+  --it-lap: light-dark(#c9c9c4, #8a8b90); --it-shadow: none;
+}
+:root[data-skin="dispatch"] {
+  --it-a: light-dark(#b8654f, #d27c66); --it-b: light-dark(#4f78b8, #7a9fd8); --it-c: light-dark(#c99a3c, #e0b45c);
+  --it-g: light-dark(#4f8a63, #6fb386); --it-y: light-dark(#d8b23c, #e6c458); --it-o: light-dark(#cc8442, #dd9a5c);
+  --it-k: light-dark(#1d2421, #d3dcd6); --it-pot: light-dark(#a9674b, #c07b5d); --it-wood: light-dark(#8c6a47, #a58360);
+  --it-sky: light-dark(#a9c6d6, #5f8aa3); --it-lap: light-dark(#a9b2ad, #6f7a74);
+}
+
+.it { color: var(--it-k); }
+.it .ia { fill: var(--it-a); } .it .ib { fill: var(--it-b); } .it .ic { fill: var(--it-c); } .it .ig { fill: var(--it-g); }
+.it .iy { fill: var(--it-y); } .it .io { fill: var(--it-o); } .it .ik { fill: var(--it-k); } .it .iw { fill: var(--it-w); }
+.it .ip { fill: var(--it-p); } .it .ipot { fill: var(--it-pot); } .it .isky { fill: var(--it-sky); } .it .icof { fill: var(--it-coffee); }
+.it .iwood { fill: var(--it-wood); } .it .ilap { fill: var(--it-lap); }
+.it .ia2 { fill: color-mix(in srgb, var(--it-a) 68%, #000); } .it .ig2 { fill: color-mix(in srgb, var(--it-g) 72%, #000); }
+.it .iy2 { fill: color-mix(in srgb, var(--it-y) 72%, #000); } .it .ipot2 { fill: color-mix(in srgb, var(--it-pot) 78%, #000); }
+.it .iwood2 { fill: color-mix(in srgb, var(--it-wood) 70%, #000); } .it .ilap2 { fill: color-mix(in srgb, var(--it-lap) 70%, #000); }
+.it .la, .it .lg, .it .lg2, .it .lk, .it .lw, .it .lw2, .it .ls, .it .lo, .it .lo2, .it .ly {
+  fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.4; }
+.it .la { stroke: var(--it-a); stroke-width: 1.5; } .it .lg { stroke: var(--it-g); stroke-width: 2; }
+.it .lg2 { stroke: color-mix(in srgb, var(--it-g) 62%, #000); stroke-width: .6; }
+.it .lk { stroke: var(--it-k); stroke-width: 1.6; } .it .lw { stroke: var(--it-w); stroke-width: .7; opacity: .8; }
+.it .lw2 { stroke: var(--it-w); stroke-width: .5; opacity: .55; } .it .ls { stroke: var(--it-steam); stroke-width: .8; }
+.it .lo { stroke: var(--it-o); stroke-width: 1.5; } .it .lo2 { stroke: color-mix(in srgb, var(--it-o) 60%, #000); stroke-width: .6; }
+.it .ly { stroke: var(--it-y); stroke-width: 1.1; }
+.it .ishadow { fill: var(--it-shadow); }
+.pick .it .ishadow { display: none; }
+.le .pick .it { color: var(--it-k); }
+
+/* ---------- agent with its own hue: the body takes the colour, the status stays as a ring ---------- */
+.ring { fill: none; stroke: currentColor; stroke-width: 24; stroke-linejoin: round; }
+.body.custom { fill: var(--agent); stroke: var(--sheet); stroke-width: 8; stroke-linejoin: round; paint-order: stroke; }
+.custom .eye { stroke: rgb(0 0 0 / .32); stroke-width: 1.2; }
+.d-recent .ring { display: none; }
+.d-recent .body.custom { fill: none; stroke: var(--agent); stroke-width: 6; stroke-dasharray: 12 9; paint-order: normal; }
+.avatar { flex: none; display: inline-block; vertical-align: middle; overflow: visible; color: var(--closed); }
+.avatar.d-needs_you { color: var(--needs); } .avatar.d-working { color: var(--work); } .avatar.d-your_move { color: var(--move); }
+
+/* ---------- edit mode ---------- */
+.look-bar { flex-basis: 100%; display: flex; align-items: center; gap: 8px 14px; flex-wrap: wrap; margin-bottom: -14px; }
+.look-toggle[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.look-hint { font-size: 12.5px; color: var(--ink-3); }
+.office.editing .desk { outline: 1.5px dashed var(--ink-3); outline-offset: 3px; border-radius: var(--radius-sm); }
+.office.editing .desk:hover { outline-color: var(--ink); }
+.office .desk.look-open { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: var(--radius-sm); }
+
+/* ---------- the editor popover ---------- */
+.le { position: fixed; z-index: 25; width: min(372px, calc(100vw - 24px)); max-height: calc(100vh - 24px); overflow-y: auto;
+  background: var(--sheet); color: var(--ink); border: var(--border-w) solid var(--edge); border-radius: var(--radius);
+  box-shadow: var(--shadow); padding: 12px 14px 14px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; font-size: 13.5px; animation: peek-in .12s ease-out; }
+.le.sheet { left: 12px; right: 12px; bottom: 12px; top: auto; width: auto; max-height: 62vh; }
+.le header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.le header > div { min-width: 0; }
+.le-title { display: block; font: 600 15px/1.3 var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.le-where { color: var(--ink-3); font-size: 12px; }
+.le-x { padding: 0 9px; line-height: 1.5; font-size: 18px; }
+.le-note { margin: -6px 0 0; font-size: 12px; color: var(--ink-3); }
+.le h5 { margin: 0 0 6px; font: 600 12px var(--text); color: var(--ink-2); }
+.le-count { color: var(--ink-3); font-weight: 400; }
+.le .picks { margin-bottom: 0; }
+.le .pick { color: var(--ink-3); padding: 5px; }
+.le .pick[aria-pressed="true"] { color: var(--ink); }
+.le-shapes .pick svg { width: 100%; }
+.le-shapes path { fill: var(--pv, currentColor); }
+.le-shapes .pick:not([aria-pressed="true"]) path { opacity: .55; }
+.le-items { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.le-items .pick { padding: 4px 2px; }
+.le-items .pick svg { height: 30px; }
+.le .desk-picks .pick { font-size: 10.5px; padding: 4px 2px; }
+.le-hue { appearance: none; -webkit-appearance: none; width: 100%; height: 14px; margin: 2px 0 8px; border-radius: 7px; cursor: pointer;
+  background: linear-gradient(90deg, hsl(0 70% 62%), hsl(60 70% 58%), hsl(120 60% 55%), hsl(180 60% 55%), hsl(240 65% 66%), hsl(300 60% 62%), hsl(359 70% 62%)); }
+.le-hue.off { opacity: .5; }
+.le-hue::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--sheet);
+  border: 3px solid var(--ink); box-shadow: 0 1px 3px rgb(0 0 0 / .3); }
+.le-hue::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: var(--sheet); border: 3px solid var(--ink); }
+.le-sw { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.le-sw .sw { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--sheet); background: var(--agent); cursor: pointer;
+  box-shadow: 0 0 0 1px var(--rule); padding: 0; }
+:root[data-skin="konstruktor"] .le-sw .sw { border-radius: 0; }
+.le-sw .sw[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--ink); }
+.le-status-hue { padding: 3px 10px; font-size: 12.5px; }
+.le-status-hue[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.le-label { width: 100%; padding: 6px 10px; border: var(--border-w) solid var(--edge); border-radius: var(--radius-sm); background: var(--paper); }
+.le footer { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.le footer .ghost { padding: 5px 10px; font-size: 13px; }
+.le footer .ghost:disabled { opacity: .4; cursor: default; }
+.le-save { margin-left: auto; font-size: 12px; color: var(--ink-3); }
+
+/* ---------- palette fieldset in Appearance ---------- */
+.presets { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
+.preset { display: flex; align-items: center; gap: 8px; text-align: left; padding: 6px 8px; border: 1px solid var(--rule);
+  border-radius: var(--radius-sm); background: transparent; cursor: pointer; min-width: 0; }
+.preset[aria-pressed="true"] { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+.preset .sw { display: flex; flex: none; }
+.preset .sw i { width: 9px; height: 22px; }
+.preset b { font: 600 13px/1.2 var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pal-inputs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.pal-inputs label { display: grid; gap: 4px; font-size: 11.5px; color: var(--ink-2); }
+.pal-inputs input { width: 100%; height: 30px; padding: 0 2px; border: 1px solid var(--rule); border-radius: var(--radius-sm); background: transparent; cursor: pointer; }
+#palette .ghost { margin-top: 8px; padding: 4px 10px; font-size: 13px; }
+#palette .ghost:disabled { opacity: .4; cursor: default; }
+
+/* ---------- discoverability: pencil on a desk, toolbar button, drawer section ---------- */
+.desks { position: relative; }
+.look-toggle { display: inline-flex; align-items: center; gap: 6px; }
+.look-ico { width: 14px; height: 14px; flex: none; }
+.look-pencil { position: absolute; z-index: 2; width: 24px; height: 24px; padding: 0; display: grid; place-items: center;
+  border: 1px solid var(--rule); border-radius: 50%; background: var(--sheet); color: var(--ink-2); cursor: pointer;
+  opacity: 0; pointer-events: none; transition: opacity .12s; }
+.look-pencil .look-ico { width: 13px; height: 13px; }
+.desk:hover + .look-pencil, .desk:focus-visible + .look-pencil, .desk.look-open + .look-pencil,
+.look-pencil:hover, .look-pencil:focus-visible { opacity: 1; pointer-events: auto; }
+.look-pencil:focus-visible { pointer-events: auto; }
+.look-pencil:hover { color: var(--ink); border-color: var(--ink-3); }
+.office.editing .look-pencil { display: none; }
+@media (hover: none) {
+  .look-pencil { opacity: .55; pointer-events: auto; width: 22px; height: 22px; }
+}
+.drawer .look-row { display: flex; align-items: center; gap: 12px; }
+.drawer .look-row span { flex: 1; color: var(--ink-2); }

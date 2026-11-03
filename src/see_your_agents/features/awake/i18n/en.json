@@ -1,0 +1,8 @@
+{
+  "awake.title": "Sleep",
+  "awake.switch": "Keep the Mac awake while agents work",
+  "awake.off": "Off: the Mac sleeps as usual.",
+  "awake.active": "Agents are working now: the Mac won’t go to sleep on its own. Closing the lid still puts it to sleep.",
+  "awake.idle": "Nobody is working now: the Mac sleeps as usual.",
+  "awake.bad_enabled": "enabled: true or false"
+}

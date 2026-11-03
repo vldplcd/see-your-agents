@@ -1,0 +1,48 @@
+/* Builder: the banner of the dashboard's own builds under the header, and the diff. */
+.builder { margin-top: 16px; padding: 10px 14px 12px; background: var(--sheet); border: var(--border-w) solid var(--rule);
+  border-left: 4px solid var(--work); border-radius: var(--radius); }
+.stage:has(#results:not(.hidden)) .builder { display: none; }
+.builder-head { display: flex; gap: 10px; align-items: baseline; font-size: 12.5px; color: var(--ink-3); }
+.builder-head b { font: 600 12.5px var(--text); text-transform: uppercase; letter-spacing: .05em; color: var(--work-ink); }
+.builder-restart { color: var(--ink); font-weight: 500; }
+.builder-list { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 8px; }
+.builder-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 16px; align-items: center;
+  padding: 8px 0 0; border-top: 1px solid var(--rule); }
+.builder-row:first-child { border-top: 0; padding-top: 2px; }
+.builder-text { min-width: 0; display: flex; flex-wrap: wrap; gap: 2px 10px; align-items: baseline; }
+.builder-title { font-size: 14.5px; font-weight: 600; color: var(--ink); overflow-wrap: anywhere; }
+.builder-status { font-size: 13.5px; color: var(--ink-2); overflow-wrap: anywhere; }
+.builder-status a { color: var(--link); }
+.builder-row.s-building .builder-status, .builder-row.s-checking .builder-status { color: var(--work-ink); }
+.builder-row.s-ready .builder-status { color: var(--work-ink); font-weight: 600; }
+.builder-row.s-failed .builder-status, .builder-row.waiting .builder-status { color: var(--needs-ink); }
+.builder-row.s-rolled_back .builder-status { color: var(--move-ink); }
+.builder-note { flex-basis: 100%; margin: 2px 0 0; font-size: 13px; color: var(--needs-ink); }
+.builder-acts { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+.builder-acts .ghost, .builder-form .ghost { padding: 4px 11px; font-size: 13px; }
+.builder .builder-go { color: var(--on-needs); background: var(--work); border-color: var(--work); }
+.builder .ghost:disabled { opacity: .55; cursor: progress; }
+.builder-tail { flex-basis: 100%; font-size: 12.5px; color: var(--ink-3); }
+.builder-tail pre { max-height: 220px; overflow: auto; margin: 6px 0 0; padding: 8px; background: var(--paper);
+  border-radius: var(--radius-sm); white-space: pre-wrap; overflow-wrap: anywhere; color: var(--ink-2); }
+.builder-form { grid-column: 1 / -1; display: flex; gap: 8px; align-items: flex-start; }
+.builder-form textarea { flex: 1; min-width: 0; font: inherit; font-size: 14px; color: var(--ink); background: var(--paper);
+  border: var(--border-w) solid var(--edge); border-radius: var(--radius-sm); padding: 6px 8px; resize: vertical; }
+@media (max-width: 720px) { .builder-row { grid-template-columns: minmax(0, 1fr); } .builder-acts { justify-content: flex-start; } }
+
+.builder-modal { position: fixed; inset: 4vh 4vw; z-index: 20; display: flex; flex-direction: column; overflow: hidden;
+  background: var(--sheet); border: var(--border-w) solid var(--edge); border-radius: calc(var(--radius) + 2px); box-shadow: var(--shadow); }
+.builder-modal header { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 14px;
+  border-bottom: 1px solid var(--rule); font-size: 13.5px; }
+.builder-diff-body { flex: 1; overflow: auto; padding: 10px 14px 16px; }
+.builder-diff-body pre { margin: 0; font: 12.5px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace; white-space: pre; color: var(--ink-2); }
+.builder-stat { padding-bottom: 10px; margin-bottom: 10px !important; border-bottom: 1px solid var(--rule); }
+.builder-add { color: var(--work-ink); background: var(--work-tint); display: inline-block; min-width: 100%; }
+.builder-del { color: var(--needs-ink); background: var(--needs-tint); display: inline-block; min-width: 100%; }
+.builder-hunk { color: var(--link); }
+.builder-file { color: var(--ink); font-weight: 700; display: inline-block; margin-top: 12px; }
+.builder-meta { color: var(--ink-3); }
+
+[data-skin="konstruktor"] .builder { border: 2px solid var(--edge); border-left-width: 8px; border-radius: 0; }
+[data-skin="dispatch"] .builder { border-radius: 4px; border-left-width: 8px; }
+[data-skin="dispatch"] .builder-head b { font: 800 14px var(--display); letter-spacing: .04em; color: var(--ink); }

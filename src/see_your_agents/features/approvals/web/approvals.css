@@ -1,0 +1,46 @@
+/* Approvals: the line on a board card, the drawer section and the block above the chat's composer.
+   Tokens only, so every skin and theme applies. */
+.approvals-line { margin: 4px 0 0; font-size: 13px; color: var(--needs-ink); overflow-wrap: anywhere; }
+.approvals-line .approvals-sum { color: var(--ink); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
+.approvals-open { color: var(--link); white-space: nowrap; margin-left: 4px; }
+.approvals-drawer p { margin: 4px 0; overflow-wrap: anywhere; }
+
+[data-panel="approvals"]:empty { display: none; }
+[data-panel="approvals"] { max-height: 55vh; overflow-y: auto; overscroll-behavior: contain; border-top: 1px solid var(--rule); }
+.approvals-box { display: grid; gap: 6px; margin: 0; padding: 10px 12px; background: var(--needs-tint); border-left: 3px solid var(--needs); }
+.approvals-box + .approvals-box { border-top: 1px solid var(--rule); }
+.approvals-head { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; font-size: 12.5px; color: var(--ink-3); }
+.approvals-head b { color: var(--needs-ink); font-size: 13.5px; }
+.approvals-box .approvals-sum { margin: 0; font: 600 13px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--ink); overflow-wrap: anywhere; }
+.approvals-note { margin: 0; font-size: 12.5px; color: var(--ink-2); }
+.approvals-text { margin: 0; max-height: 180px; overflow: auto; padding: 8px 10px; white-space: pre-wrap; overflow-wrap: anywhere;
+  font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--sheet); border: 1px solid var(--rule); border-radius: var(--radius-sm); color: var(--ink); }
+.approvals-plan { max-height: 260px; overflow: auto; padding: 8px 10px; background: var(--sheet); border: 1px solid var(--rule); border-radius: var(--radius-sm); font-size: 13.5px; }
+.approvals-q { margin: 0; padding: 6px 8px; display: grid; gap: 4px; border: 1px solid var(--rule); border-radius: var(--radius-sm); background: var(--sheet); }
+.approvals-q legend { padding: 0 4px; font-weight: 600; font-size: 13.5px; }
+.approvals-tag { font-size: 11px; font-weight: 600; padding: 1px 6px; border-radius: 9px; border: 1px solid var(--rule); color: var(--ink-2); }
+.approvals-opt { display: flex; gap: 8px; align-items: baseline; font-size: 13.5px; cursor: pointer; }
+.approvals-opt small { color: var(--ink-3); }
+.approvals-other { flex: 1; min-width: 0; padding: 4px 8px; border: 1px solid var(--rule); border-radius: var(--radius-sm); background: var(--paper); font: inherit; }
+.approvals-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.approvals-actions[hidden], .approvals-why[hidden] { display: none; }
+.approvals-allow, .approvals-deny { font: inherit; font-size: 13.5px; padding: 6px 14px; cursor: pointer; border-radius: var(--radius-sm); border: var(--border-w) solid var(--edge); }
+.approvals-allow { background: var(--work); border-color: var(--work); color: var(--sheet); font-weight: 600; }
+.approvals-deny { background: var(--sheet); color: var(--ink); }
+.approvals-allow:disabled, .approvals-deny:disabled, .approvals-link:disabled { opacity: .5; cursor: default; }
+.approvals-link { border: 0; background: none; padding: 0; color: var(--link); cursor: pointer; font: inherit; font-size: 13px; text-decoration: underline; }
+.approvals-why { display: flex; gap: 8px; align-items: flex-end; }
+.approvals-why textarea { flex: 1; min-width: 0; resize: vertical; padding: 6px 8px; font: inherit; font-size: 13.5px; border: 1px solid var(--rule); border-radius: var(--radius-sm); background: var(--paper); color: var(--ink); }
+.approvals-done { margin: 0; padding: 8px 12px; font-size: 13px; color: var(--ink-2); background: var(--work-tint); border-left: 3px solid var(--work); }
+.approvals-msg { margin: 0; font-size: 12.5px; color: var(--ink-2); }
+.approvals-msg:empty { display: none; }
+.approvals-msg.bad { color: var(--needs-ink); }
+.approvals-warn { margin: 0; padding: 4px 8px; font-weight: 700; font-size: 13px; color: var(--on-needs); background: var(--needs); border-radius: var(--radius-sm); }
+.approvals-line + .approvals-warn { margin-top: 4px; font-size: 12px; }
+.approvals-fields { margin: 0; display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 2px 10px; font-size: 12.5px; }
+.approvals-fields dt { color: var(--ink-3); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.approvals-fields dd { margin: 0; min-width: 0; }
+.approvals-fields pre { margin: 0; max-height: 140px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; font: 12px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--ink); }
+.approvals-partial { margin: 0; font-size: 12.5px; color: var(--needs-ink); }
+.approvals-pair { font: inherit; font-size: 13.5px; padding: 6px 14px; cursor: pointer; border-radius: var(--radius-sm); border: var(--border-w) solid var(--edge); background: var(--sheet); color: var(--link); font-weight: 600; }
+a.approvals-pair { display: inline-block; text-decoration: none; }

@@ -1,0 +1,32 @@
+/* MR: marks inside the shell's MR chips, the "MR merged" badge, the drawer section. `.chip` belongs to the shell and
+   its skins: colours go only on the .mr-* parts inside it. */
+.mr-marks { display: inline-flex; align-items: center; gap: 3px; margin-left: 5px; vertical-align: -2px; }
+.mr-i { width: 12px; height: 12px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.mr-i .mr-fill { fill: currentColor; stroke: none; }
+.mr-n { display: inline-flex; align-items: center; gap: 1px; font-size: 11px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.mr-c-ok { color: var(--work-ink); }
+.mr-c-bad { color: var(--needs-ink); }
+.mr-c-wait { color: var(--move-ink); }
+.mr-c-off, .mr-q { color: var(--ink-3); }
+.mr-q { font-size: 11px; font-weight: 600; }
+[data-skin="dispatch"] .card .mr-marks { display: flex; flex-wrap: wrap; gap: 2px 3px; margin: 1px 0 2px; }
+
+.mr-badge-line { margin: 0 0 6px; }
+.mr-badge { display: inline-flex; align-items: center; gap: 4px; padding: 1px 7px; font-size: 12px; font-weight: 600;
+  border: 1px solid var(--work); border-radius: calc(var(--radius-sm) - 3px); color: var(--work-ink); background: var(--work-tint); }
+[data-skin="konstruktor"] .mr-badge { border-width: 2px; }
+[data-skin="dispatch"] .mr-badge { font: 700 13px var(--text); letter-spacing: .02em; }
+
+.mr-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.mr-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; }
+.mr-head a { font-weight: 600; }
+.mr-state { font-size: 12px; padding: 0 6px; border: 1px solid currentColor; border-radius: calc(var(--radius-sm) - 3px); }
+.mr-s-merged { color: var(--work-ink); }
+.mr-s-opened { color: var(--link); }
+.mr-s-draft, .mr-s-closed, .mr-s-locked { color: var(--ink-3); }
+.mr-title { flex: 1 1 200px; min-width: 0; font-size: 13.5px; color: var(--ink-2); }
+.mr-facts { display: flex; flex-wrap: wrap; gap: 3px 14px; margin-top: 4px; font-size: 12.5px; color: var(--ink-2); }
+.mr-facts > span { display: inline-flex; align-items: center; gap: 4px; }
+.mr-when { color: var(--ink-3); }
+.mr-err { color: var(--needs-ink); }
+.mr-note { margin: 8px 0 0; font-size: 12.5px; color: var(--ink-3); }

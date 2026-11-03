@@ -1,0 +1,8 @@
+{
+  "awake.title": "Reposo",
+  "awake.switch": "Mantener el Mac despierto mientras trabajan los agentes",
+  "awake.off": "Desactivado: el Mac entra en reposo como siempre.",
+  "awake.active": "Ahora hay agentes trabajando: el Mac no entrará en reposo por sí solo. Cerrar la tapa sí lo pone en reposo.",
+  "awake.idle": "Ahora no trabaja nadie: el Mac entra en reposo como siempre.",
+  "awake.bad_enabled": "enabled: true o false"
+}

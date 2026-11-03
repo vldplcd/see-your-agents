@@ -1,0 +1,58 @@
+/* New session: the dialog behind the «+» in the header. Tokens come from base.css; skins override below. */
+.launch { width: min(600px, calc(100vw - 32px)); max-height: calc(100vh - 32px); padding: 0; color: var(--ink);
+  background: var(--sheet); border: var(--border-w) solid var(--edge); border-radius: calc(var(--radius) + 2px); box-shadow: var(--shadow); }
+.launch::backdrop { background: var(--scrim); }
+.launch-form { display: flex; flex-direction: column; gap: 12px; padding: 14px 18px 16px; }
+.launch-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.launch-head h2 { margin: 0; font: 600 18px var(--display); }
+.launch-x { padding: 2px 10px; font-size: 18px; line-height: 1.2; }
+
+.launch-recent h3, .launch-field > span, .launch-program > span { display: block; margin: 0 0 4px; font: 600 12px var(--text); text-transform: uppercase;
+  letter-spacing: .05em; color: var(--ink-3); }
+.launch-folders { list-style: none; margin: 0; padding: 0; max-height: 196px; overflow-y: auto;
+  border: var(--border-w) solid var(--rule); border-radius: var(--radius-sm); }
+.launch-folders li + li { border-top: 1px solid var(--rule); }
+.launch-folder { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 10px; align-items: baseline;
+  padding: 6px 10px; border: 0; background: none; text-align: left; cursor: pointer; }
+.launch-folder:hover { background: color-mix(in srgb, var(--ink) 5%, transparent); }
+.launch-folder[aria-pressed="true"] { background: var(--work-tint); box-shadow: inset 3px 0 0 var(--work); }
+.launch-folder b { font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.launch-folder small { grid-column: 1; font-size: 12.5px; color: var(--ink-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.launch-folder em { grid-column: 2; grid-row: 1 / span 2; align-self: center; font: 500 12px var(--text); font-style: normal; color: var(--move-ink); }
+.launch-empty { padding: 8px 10px; font-size: 13px; color: var(--ink-3); }
+.launch-program { display: flex; align-items: center; gap: 12px; }
+.launch-program > span { margin: 0; }
+
+.launch-field { display: block; min-width: 0; }
+.launch-field input, .launch-field textarea, .launch-field select { width: 100%; min-width: 0; padding: 7px 10px; font-size: 14px;
+  color: var(--ink); border: var(--border-w) solid var(--edge); border-radius: var(--radius-sm); background: var(--paper); }
+.launch-field textarea { display: block; resize: vertical; min-height: 84px; font: inherit; font-size: 14px; line-height: 1.4; }
+.launch-opts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.launch-hint { margin: -6px 0 0; font-size: 12.5px; color: var(--ink-3); }
+.launch-hint:empty { display: none; }
+.launch-hint code { font-size: 12px; white-space: nowrap; }
+.launch-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 16px; }
+.launch-name { flex: 1 1 220px; }
+.launch-wt { padding-bottom: 7px; font-size: 13.5px; }
+.launch-error { margin: 0; font-size: 13.5px; color: var(--needs-ink); white-space: pre-line; overflow-wrap: anywhere; }
+.launch-error:empty { display: none; }
+.launch-foot { display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
+.launch-status { flex: 1; font-size: 13px; color: var(--ink-2); }
+.launch-go { padding: 7px 18px; font-weight: 600; cursor: pointer; color: var(--on-needs); background: var(--work);
+  border: var(--border-w) solid var(--work); border-radius: var(--radius-sm); }
+.launch-go:disabled { opacity: .55; cursor: progress; }
+.launch-toast { position: fixed; right: 16px; bottom: 16px; z-index: 30; max-width: min(420px, calc(100vw - 32px));
+  padding: 10px 14px; font-size: 13.5px; color: var(--needs-ink); background: var(--sheet); white-space: pre-line;
+  border: var(--border-w) solid var(--needs); border-radius: var(--radius-sm); box-shadow: var(--shadow); cursor: pointer; }
+@media (max-width: 560px) { .launch-opts { grid-template-columns: minmax(0, 1fr); } }
+
+/* Fork: the same form as a popover by its button; openFork() sets top and left. */
+.launch-fork { width: min(420px, calc(100vw - 24px)); margin: 0; inset: auto; }
+.launch-fork::backdrop { background: transparent; }
+.launch-fork .launch-head h2 { font-size: 16px; }
+.launch-fork-note { margin: 0; font-size: 13.5px; line-height: 1.4; color: var(--ink-2); overflow-wrap: anywhere; }
+.launch-fork .launch-hint { margin: -4px 0 0; }
+
+[data-skin="konstruktor"] .launch { box-shadow: var(--shadow); }
+[data-skin="konstruktor"] .launch-folder[aria-pressed="true"] { box-shadow: inset 6px 0 0 var(--work); }
+[data-skin="dispatch"] .launch-head h2 { font: 800 20px var(--display); letter-spacing: .04em; text-transform: uppercase; }

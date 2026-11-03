@@ -1,0 +1,33 @@
+{
+  "board.title": "Board",
+  "board.column.needs_you": "Braucht dich",
+  "board.column.working": "In Arbeit",
+  "board.column.your_move": "Dein Zug",
+  "board.column.recent": "Kürzlich beendet",
+  "board.column.archive": "Archiv",
+  "board.empty.needs_you": "Niemand wartet. Arbeite in Ruhe.",
+  "board.empty.working": "Gerade arbeitet niemand.",
+  "board.empty.your_move": "Keine Sitzung wartet auf einen nächsten Schritt.",
+  "board.empty.recent": "In den letzten drei Tagen wurde nichts beendet.",
+  "board.empty.archive": "Das Archiv ist leer.",
+  "board.hint.recent": {
+    "one": "Der Prozess hat sich selbst beendet. Nach {n} Tag ohne Aktivität wandert die Karte ins Archiv; „Archivieren“ verschiebt sie sofort.",
+    "other": "Der Prozess hat sich selbst beendet. Nach {n} Tagen ohne Aktivität wandert die Karte ins Archiv; „Archivieren“ verschiebt sie sofort."
+  },
+  "board.hint.archive": "Alte Sitzungen und die, die du als „Erledigt“ markiert hast. Die Suche oben findet sie.",
+  "board.archive.show": "Archiv anzeigen",
+  "board.archive.folded": "Alte und beendete Sitzungen. Klicke, um sie anzuzeigen.",
+  "board.archive.more": "Mehr anzeigen ({n})",
+  "board.archive.fold": "Einklappen",
+  "board.peer.sent": "Gesendet: {text}",
+  "board.peer.received": "Empfangen: {text}",
+  "board.card.waiting": "wartet seit {time}",
+  "board.card.archive_in": "wird {when} archiviert",
+  "board.card.context": "Kontext {pct} %",
+  "board.card.context_title": "Kontextfenster: {text}",
+  "board.card.archive_now": "Jetzt ins Archiv verschieben",
+  "board.card.archive": "Archivieren",
+  "board.card.chat": "Chat",
+  "board.in_hours": "in {n} Std.",
+  "board.in_days": { "one": "in {n} Tag", "other": "in {n} Tagen" }
+}

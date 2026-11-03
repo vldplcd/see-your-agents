@@ -1,0 +1,33 @@
+{
+  "board.title": "Board",
+  "board.column.needs_you": "Needs you",
+  "board.column.working": "Working",
+  "board.column.your_move": "Your move",
+  "board.column.recent": "Recently closed",
+  "board.column.archive": "Archive",
+  "board.empty.needs_you": "No one is waiting. Work in peace.",
+  "board.empty.working": "No one is working right now.",
+  "board.empty.your_move": "No sessions are waiting for a next step.",
+  "board.empty.recent": "Nothing closed in the last three days.",
+  "board.empty.archive": "The archive is empty.",
+  "board.hint.recent": {
+    "one": "The process ended on its own. After {n} day without activity the card moves to the archive; “Archive” moves it now.",
+    "other": "The process ended on its own. After {n} days without activity the card moves to the archive; “Archive” moves it now."
+  },
+  "board.hint.archive": "Old sessions and the ones you marked “Done”. Search above finds them.",
+  "board.archive.show": "Show the archive",
+  "board.archive.folded": "Old and finished sessions. Click to show them.",
+  "board.archive.more": "Show more ({n})",
+  "board.archive.fold": "Collapse",
+  "board.peer.sent": "Sent: {text}",
+  "board.peer.received": "Received: {text}",
+  "board.card.waiting": "waiting {time}",
+  "board.card.archive_in": "archived {when}",
+  "board.card.context": "context {pct}%",
+  "board.card.context_title": "Context window: {text}",
+  "board.card.archive_now": "Move to the archive now",
+  "board.card.archive": "Archive",
+  "board.card.chat": "Chat",
+  "board.in_hours": "in {n} hr",
+  "board.in_days": { "one": "in {n} day", "other": "in {n} days" }
+}

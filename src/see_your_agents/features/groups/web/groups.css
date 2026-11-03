@@ -1,0 +1,85 @@
+/* Groups: rows, thread and create form inside the chat panel. The bubbles, composer, .confirm and .act are the chat's own;
+   everything here starts with .groups- or .g-. Tokens only, so skins and themes apply. */
+
+/* list and rail: a stack of up to three member avatars, or the plus of “New group” */
+.groups-stack, .groups-plus { position: relative; display: block; width: 100%; height: 100%; }
+.groups-stack .av { position: absolute; width: 24px; height: 24px; border-radius: 50%; background: var(--sheet); box-shadow: 0 0 0 2px var(--sheet); }
+.groups-stack .av > svg { width: 24px; height: 24px; }
+.groups-stack.n1 .av { left: 8px; top: 8px; width: 24px; height: 24px; }
+.groups-stack .av:nth-child(1) { left: 0; top: 0; } .groups-stack .av:nth-child(2) { right: 0; top: 4px; } .groups-stack .av:nth-child(3) { left: 8px; bottom: 0; }
+.groups-stack.n1 .av:nth-child(1) { left: 8px; top: 8px; }
+.groups-stack.n2 .av:nth-child(1) { left: 1px; top: 2px; } .groups-stack.n2 .av:nth-child(2) { right: 1px; top: auto; bottom: 2px; }
+.rail-item .groups-stack .av, .rail-item .groups-stack .av > svg { width: 20px; height: 20px; }
+.rail-item .groups-stack .av:nth-child(3) { left: 7px; }
+.groups-plus { display: grid; place-items: center; border: 1.5px dashed var(--ink-3); border-radius: 50%; color: var(--link); box-sizing: border-box; }
+.groups-plus .ic { width: 18px; height: 18px; }
+[data-skin="konstruktor"] .groups-plus, [data-skin="konstruktor"] .groups-stack .av { border-radius: 0; }
+
+/* thread */
+.groups-thread { display: flex; flex-direction: column; height: 100%; min-height: 0; }
+.groups-bar { padding: 8px 10px; border-bottom: 1px solid var(--rule); display: grid; gap: 8px; max-height: 40%; overflow-y: auto; flex: none; }
+.groups-bar:empty { display: none; }
+.groups-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.groups-chip { max-width: 100%; display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px 2px 3px; border: 1px solid var(--rule); border-radius: 999px; background: var(--paper); font-size: 12.5px; }
+.groups-chip .av, .groups-chip .av > svg { width: 20px; height: 20px; }
+.groups-chip b { font-weight: 600; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.groups-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--closed); }
+.groups-dot.d-needs { background: var(--needs); } .groups-dot.d-work { background: var(--work); } .groups-dot.d-move { background: var(--move); }
+.groups-more { margin-left: auto; padding: 0 9px; font-weight: 700; letter-spacing: .08em; }
+.groups-panel { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; }
+.groups-lead { font-size: 12.5px; color: var(--ink-3); }
+.groups-panel input[type=text], .groups-panel input[type=search], .groups-create input[type=text], .groups-create input[type=search] {
+  flex: 1 1 160px; min-width: 0; padding: 6px 10px; border: var(--border-w) solid var(--edge); border-radius: var(--radius-sm); background: var(--paper); font: inherit; font-size: 14px; }
+.groups-add { align-items: stretch; }
+.groups-add .groups-pick { flex-basis: 100%; }
+.groups-bar .confirm { flex-basis: auto; }
+.groups-empty { text-align: center; color: var(--ink-3); padding: 18px 8px; }
+.groups-empty code, .groups-hint code { background: color-mix(in srgb, var(--ink) 8%, transparent); padding: 0 4px; border-radius: 4px; }
+
+/* feed: user posts with delivery marks, replies with an avatar, compact peer messages */
+.g-marks { display: flex; flex-wrap: wrap; gap: 3px 8px; margin-top: 4px; font-size: 11.5px; }
+.g-mark { color: var(--ink-3); }
+.g-mark i { font-style: normal; font-weight: 700; }
+.g-mark.ok i { color: var(--work-ink); }
+.g-mark.pend i { animation: chat-dot 1.2s infinite; }
+.g-mark.bad { color: var(--needs-ink); }
+.g-mark.bad em { font-style: normal; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+.g-reply { align-items: flex-end; gap: 6px; }
+.g-reply > .av, .g-reply > .av > svg { width: 30px; height: 30px; }
+.g-reply .bub { max-width: calc(100% - 40px); }
+.g-who { display: block; font-size: 12px; font-weight: 600; color: var(--ink-2); margin-bottom: 1px; }
+.g-typing { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--ink-3); margin-top: 3px; }
+.g-sup .sup-tag { display: block; margin-bottom: 1px; }
+.g-sup .bub { border-left: 3px solid var(--link); }
+.g-reply .bub.md > time, .g-sup .bub > time { display: block; }
+
+/* composer and autocomplete */
+.groups-composer { position: relative; }
+.groups-ac { position: absolute; left: 10px; right: 10px; bottom: calc(100% - 2px); z-index: 4; display: grid; max-height: 220px; overflow-y: auto;
+  background: var(--sheet); border: var(--border-w) solid var(--edge); border-radius: var(--radius-sm); box-shadow: var(--shadow); }
+.groups-ac button { display: flex; gap: 8px; align-items: baseline; text-align: left; padding: 6px 12px; border: 0; background: transparent; color: var(--ink); font: inherit; font-size: 13.5px; cursor: pointer; }
+.groups-ac button span { color: var(--ink-3); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.groups-ac button:hover, .groups-ac button.on { background: color-mix(in srgb, var(--link) 13%, var(--sheet)); }
+
+/* create form and member picker */
+.groups-create { display: flex; flex-direction: column; gap: 10px; padding: 14px; height: 100%; box-sizing: border-box; overflow-y: auto; }
+.groups-field { display: grid; gap: 4px; font-size: 12.5px; color: var(--ink-3); }
+.groups-field em { font-style: normal; }
+.groups-pick { flex: 1 1 140px; min-height: 120px; overflow-y: auto; border: 1px solid var(--rule); border-radius: var(--radius-sm); background: var(--paper); }
+.g-pick { display: flex; align-items: center; gap: 9px; width: 100%; box-sizing: border-box; padding: 6px 10px; border: 0; border-bottom: 1px solid var(--rule); background: transparent; color: var(--ink); text-align: left; cursor: pointer; font: inherit; }
+.g-pick:hover { background: color-mix(in srgb, var(--ink) 5%, transparent); }
+.g-pick.fixed { border: 1px solid var(--rule); border-radius: var(--radius-sm); cursor: default; background: color-mix(in srgb, var(--link) 7%, var(--sheet)); }
+.g-pick .av, .g-pick .av > svg { width: 28px; height: 28px; }
+.g-pick-main { display: grid; min-width: 0; font-size: 12px; color: var(--ink-3); }
+.g-pick-main b { font-size: 14px; font-weight: 600; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.g-pick-main span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.groups-actions { display: flex; justify-content: flex-end; }
+.groups-actions .act { padding: 7px 16px; font-size: 14px; background: var(--link); border-color: var(--link); color: var(--sheet); }
+.groups-create .comp-hint.bad { margin: 0; }
+
+[data-skin="konstruktor"] .groups-chip { border-radius: 0; border-width: 2px; }
+[data-skin="konstruktor"] .groups-dot { border-radius: 0; }
+[data-skin="konstruktor"] .groups-actions .act { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+[data-skin="dispatch"] .groups-chip { font: 700 14px var(--text); }
+[data-skin="dispatch"] .g-pick-main b, [data-skin="dispatch"] .groups-ac button { font-size: 15.5px; }
+[data-skin="dispatch"] .g-marks { font-size: 13px; }

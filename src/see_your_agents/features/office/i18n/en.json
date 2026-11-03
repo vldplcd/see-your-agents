@@ -1,0 +1,17 @@
+{
+  "office.title": "Office",
+  "office.no_project": "no project",
+  "office.empty": "The office is empty: no live or recent sessions.",
+  "office.plan": "Plan",
+  "office.tasks_above": "{n} more above",
+  "office.tasks_below": "{n} more below",
+  "office.recap": "Recap",
+  "office.recap_at": "Recap, {when}",
+  "office.agent_wrote": "The agent wrote last",
+  "office.you_wrote": "You wrote last",
+  "office.you_wrote_at": "You wrote last, {when}",
+  "office.started": "Started {when}",
+  "office.prompts": { "one": "{n} prompt", "other": "{n} prompts" },
+  "office.subagents": { "one": "{n} subagent", "other": "{n} subagents" },
+  "office.plans": { "one": "{n} plan", "other": "{n} plans" }
+}

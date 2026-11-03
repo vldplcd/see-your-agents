@@ -1,0 +1,17 @@
+{
+  "office.title": "Büro",
+  "office.no_project": "kein Projekt",
+  "office.empty": "Das Büro ist leer: keine laufenden oder kürzlichen Sitzungen.",
+  "office.plan": "Plan",
+  "office.tasks_above": "{n} weitere oben",
+  "office.tasks_below": "{n} weitere unten",
+  "office.recap": "Zusammenfassung",
+  "office.recap_at": "Zusammenfassung, {when}",
+  "office.agent_wrote": "Der Agent hat zuletzt geschrieben",
+  "office.you_wrote": "Du hast zuletzt geschrieben",
+  "office.you_wrote_at": "Du hast zuletzt geschrieben, {when}",
+  "office.started": "Gestartet {when}",
+  "office.prompts": { "one": "{n} Prompt", "other": "{n} Prompts" },
+  "office.subagents": { "one": "{n} Subagent", "other": "{n} Subagenten" },
+  "office.plans": { "one": "{n} Plan", "other": "{n} Pläne" }
+}

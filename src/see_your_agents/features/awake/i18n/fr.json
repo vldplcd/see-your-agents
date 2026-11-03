@@ -1,0 +1,8 @@
+{
+  "awake.title": "Veille",
+  "awake.switch": "Garder le Mac éveillé pendant que les agents travaillent",
+  "awake.off": "Désactivé : le Mac se met en veille comme d’habitude.",
+  "awake.active": "Des agents travaillent en ce moment : le Mac ne se mettra pas en veille de lui-même. Fermer le capot le met quand même en veille.",
+  "awake.idle": "Personne ne travaille en ce moment : le Mac se met en veille comme d’habitude.",
+  "awake.bad_enabled": "enabled: true ou false"
+}

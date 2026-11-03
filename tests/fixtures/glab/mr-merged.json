@@ -1,0 +1,25 @@
+{
+ "id": 50001,
+ "iid": 1140,
+ "project_id": 42,
+ "title": "PROJ-1: retry limits and a run report",
+ "state": "merged",
+ "draft": false,
+ "work_in_progress": false,
+ "merge_status": "can_be_merged",
+ "detailed_merge_status": "not_open",
+ "blocking_discussions_resolved": true,
+ "user_notes_count": 4,
+ "has_conflicts": false,
+ "merged_at": "2026-11-02T10:00:00.000Z",
+ "closed_at": null,
+ "web_url": "https://gitlab.example.com/acme/pipelines/-/merge_requests/1140",
+ "head_pipeline": {
+  "id": 900001,
+  "iid": 77,
+  "project_id": 42,
+  "ref": "refs/merge-requests/1140/head",
+  "status": "success",
+  "source": "merge_request_event"
+ }
+}

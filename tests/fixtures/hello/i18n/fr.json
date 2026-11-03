@@ -1,0 +1,12 @@
+{
+  "hello.title": "Bonjour",
+  "hello.dock_title": "Exemple de fonctionnalité : qui a dit bonjour",
+  "hello.hide": "Masquer",
+  "hello.name": "Nom",
+  "hello.name_placeholder": "Votre nom",
+  "hello.say": "Dire bonjour",
+  "hello.nobody": "Personne pour l’instant",
+  "hello.card": { "one": "{n} mot dans le titre", "many": "{n} de mots dans le titre", "other": "{n} mots dans le titre" },
+  "hello.drawer": { "one": "Le titre compte {n} mot.", "many": "Le titre compte {n} de mots.", "other": "Le titre compte {n} mots." },
+  "hello.bad_name": "name: une chaîne non vide d’au plus {max} caractères"
+}

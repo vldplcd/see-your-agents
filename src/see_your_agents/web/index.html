@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>See your agents</title>
+<link rel="icon" id="favicon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&family=Unbounded:wght@500;700&family=Jost:wght@400;500;600;700;800&family=Sofia+Sans+Condensed:wght@400;500;600;700&family=Sofia+Sans+Extra+Condensed:wght@800&display=swap" rel="stylesheet">
+<script>
+try {  // apply the saved style before first paint
+  const p = JSON.parse(localStorage.getItem("sya.prefs"));
+  if (p && p.skin) document.documentElement.dataset.skin = p.skin;
+  if (p && p.theme) document.documentElement.dataset.theme = p.theme;
+  if (p && p.paletteVars && p.paletteSkin === p.skin) {  // palette tweaks, computed by looks.js
+    for (const k in p.paletteVars) if (k.startsWith("--")) document.documentElement.style.setProperty(k, p.paletteVars[k]);
+  }
+} catch (e) { /* storage unavailable: defaults */ }
+</script>
+<script src="i18n.js"></script>
+<link rel="stylesheet" href="base.css">
+<!--sya:styles-->
+</head>
+<body>
+<header class="bar">
+  <h1 class="brand"><svg class="mark" viewBox="0 0 36 22" aria-hidden="true"><rect class="m1" x="1" y="5" width="12" height="12"/><circle class="m2" cx="20" cy="11" r="6.5"/><path class="m3" d="M29 4.5l6.5 12.5h-13z"/></svg>See your agents</h1>
+  <div class="views" role="group" aria-label="Views" data-i18n-aria-label="app.bar.views"></div>
+  <select class="filter" id="project" aria-label="Project" data-i18n-aria-label="app.bar.project"><option value="" data-i18n="app.bar.all_projects">All projects</option></select>
+  <input class="search" id="q" type="search" placeholder="Search tickets, prompts, recaps…" aria-label="Search (press /)"
+    data-i18n-placeholder="app.bar.search" data-i18n-aria-label="app.bar.search_label">
+  <div class="tally" aria-live="polite">
+    <span class="t-needs" data-i18n="app.tally.needs_you"><b id="n-needs">0</b>need you</span>
+    <span class="t-work" data-i18n="app.tally.working"><b id="n-work">0</b>working</span>
+    <span class="t-move" data-i18n="app.tally.your_move"><b id="n-move">0</b>your move</span>
+  </div>
+  <button class="ghost icon" id="prefs-btn" aria-expanded="false" aria-controls="prefs" aria-label="Appearance" title="Appearance"
+    data-i18n-aria-label="app.prefs.title" data-i18n-title="app.prefs.title"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></button>
+  <button class="ghost icon" id="notify" aria-pressed="false" aria-label="Notify me" title="Notify me when an agent is waiting for you"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg></button>
+</header>
+
+<div class="stage">
+<main id="results" class="results hidden"></main>
+</div>
+
+<div id="prefs" class="prefs hidden" role="dialog" aria-label="Appearance" data-i18n-aria-label="app.prefs.title">
+  <fieldset><legend data-i18n="app.prefs.style">Style</legend><div class="skins" id="skins"></div></fieldset>
+  <fieldset id="theme-row"><legend data-i18n="app.prefs.theme">Theme</legend><div class="seg" id="themes"></div></fieldset>
+  <fieldset id="palette"></fieldset>
+  <fieldset><legend data-i18n="app.prefs.agents">Agents in the office</legend>
+    <div class="picks" id="shapes"></div>
+    <div class="seg" id="deal"></div>
+    <p class="note" id="deal-note"></p>
+  </fieldset>
+  <fieldset><legend data-i18n="app.prefs.desk">Workplace</legend><div class="picks desk-picks" id="desk-picks"></div>
+    <label class="check" data-i18n="app.prefs.eyes"><input type="checkbox" id="faces">Agents have eyes</label>
+  </fieldset>
+  <fieldset id="lang-row"><legend><label for="lang" data-i18n="app.prefs.language">Language</label></legend>
+    <select class="filter" id="lang"></select><p class="note" id="lang-note" role="status"></p>
+  </fieldset>
+</div>
+
+<div id="scrim" class="scrim hidden"></div>
+<aside id="drawer" class="drawer hidden" role="dialog" aria-modal="true" aria-labelledby="d-title"></aside>
+<div id="modal" class="modal hidden" role="dialog" aria-modal="true">
+  <header><span id="m-title"></span><button class="ghost" id="m-close" data-i18n="app.close">Close</button></header>
+  <iframe id="m-frame" title="Plan" data-i18n-title="app.plan" sandbox="allow-scripts"></iframe>
+</div>
+
+<script>translate(document.body)</script>
+<script src="figures.js"></script>
+<script src="app.js"></script>
+<!--sya:scripts-->
+</body>
+</html>

@@ -1,0 +1,47 @@
+/* Keys: the quick switcher (⌘K) and the list of shortcuts (?). Tokens come from base.css; skins override below. */
+.keys-dialog { padding: 0; color: var(--ink); background: var(--sheet); border: var(--border-w) solid var(--edge);
+  border-radius: calc(var(--radius) + 2px); box-shadow: var(--shadow); }
+.keys-dialog::backdrop { background: var(--scrim); }
+.keys-dialog kbd { display: inline-block; min-width: 1.7em; padding: 1px 6px; font: 600 12px/1.5 var(--text); text-align: center;
+  color: var(--ink); background: var(--paper); border: 1px solid var(--edge); border-bottom-width: 2px; border-radius: 5px; }
+.keys-dialog kbd + kbd { margin-left: 3px; }
+
+.keys-switch { width: min(620px, calc(100vw - 32px)); max-height: min(560px, calc(100vh - 32px)); margin-top: max(16px, 12vh); }
+.keys-switch[open] { display: flex; flex-direction: column; }
+.keys-search { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--rule); }
+.keys-search:focus-within { box-shadow: inset 0 -2px 0 var(--focus); }
+.keys-search svg { width: 18px; height: 18px; flex: none; fill: none; stroke: var(--ink-3); stroke-width: 2; stroke-linecap: round; }
+.keys-search input { flex: 1; min-width: 0; padding: 4px 0; font-size: 16px; color: var(--ink); background: transparent; border: 0; outline: 0; }
+.keys-list { flex: 1; min-height: 0; margin: 0; padding: 6px; list-style: none; overflow-y: auto; overscroll-behavior: contain; }
+.keys-opt { display: grid; grid-template-columns: 16px minmax(0, 1fr) auto; column-gap: 10px; align-items: center;
+  padding: 7px 10px; border-radius: var(--radius-sm); cursor: pointer; }
+.keys-opt[aria-selected="true"] { background: color-mix(in srgb, var(--focus) 13%, transparent); box-shadow: inset 3px 0 0 var(--focus); }
+.keys-opt b { min-width: 0; font-size: 14.5px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.keys-opt time { font-size: 12px; color: var(--ink-3); white-space: nowrap; }
+.keys-opt small { grid-column: 2 / -1; min-width: 0; font-size: 12.5px; color: var(--ink-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.keys-mark { display: grid; place-items: center; width: 16px; }
+.keys-icon { color: var(--ink-2); }
+.keys-icon svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+.keys-tag { margin-left: 4px; font: 600 11px var(--text); text-transform: uppercase; letter-spacing: .05em; color: var(--link); vertical-align: 1px; }
+.keys-empty { padding: 14px 10px; font-size: 13.5px; color: var(--ink-3); }
+.keys-foot { display: flex; flex-wrap: wrap; gap: 4px 16px; margin: 0; padding: 8px 16px; font-size: 12.5px; color: var(--ink-3);
+  border-top: 1px solid var(--rule); }
+
+.keys-help { width: min(560px, calc(100vw - 32px)); max-height: calc(100vh - 32px); }
+.keys-body { padding: 14px 18px 16px; }
+.keys-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.keys-head h2 { margin: 0; font: 600 18px var(--display); }
+.keys-x { padding: 2px 10px; font-size: 18px; line-height: 1.2; }
+.keys-help h3 { margin: 16px 0 6px; font: 600 12px var(--text); text-transform: uppercase; letter-spacing: .05em; color: var(--ink-3); }
+.keys-help dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 7px 16px; align-items: baseline; margin: 0; }
+.keys-help dt { white-space: nowrap; }
+.keys-help dd { margin: 0; font-size: 14px; color: var(--ink-2); }
+.keys-or { margin: 0 5px; color: var(--ink-3); }
+.keys-note { margin: 16px 0 0; font-size: 12.5px; color: var(--ink-3); }
+@media (max-width: 520px) { .keys-help dl { grid-template-columns: minmax(0, 1fr); } .keys-help dd { margin-bottom: 4px; } }
+
+[data-skin="konstruktor"] .keys-dialog kbd { border-radius: 0; border-width: 2px; }
+[data-skin="konstruktor"] .keys-opt[aria-selected="true"] { box-shadow: inset 6px 0 0 var(--focus); }
+[data-skin="dispatch"] .keys-head h2 { font: 800 20px var(--display); letter-spacing: .04em; text-transform: uppercase; }
+[data-skin="dispatch"] .keys-opt b { font: 800 17px/1.15 var(--display); letter-spacing: .02em; }
+[data-skin="dispatch"] .keys-help dd, [data-skin="dispatch"] .keys-search input { font-size: 15.5px; }

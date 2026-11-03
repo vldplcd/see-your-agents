@@ -1,0 +1,11 @@
+/* "Reply to this": the button over a selection in an agent's message (quote.js). Tokens come from base.css. */
+.chat-quote { position: fixed; z-index: 40; display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px 5px 8px;
+  font: 600 13px var(--text); color: var(--sheet); background: var(--ink); border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius-sm); box-shadow: var(--shadow); cursor: pointer; white-space: nowrap; }
+.chat-quote:hover { background: color-mix(in srgb, var(--ink) 85%, var(--sheet)); }
+.chat-quote[hidden] { display: none; }
+.chat-quote svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+/* a quote never drags the message's clock along */
+#chat .msg time { user-select: none; }
+
+[data-skin="dispatch"] .chat-quote { font: 800 14px var(--display); letter-spacing: .04em; text-transform: uppercase; }

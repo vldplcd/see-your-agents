@@ -1,0 +1,17 @@
+{
+  "office.title": "Open space",
+  "office.no_project": "sans projet",
+  "office.empty": "L’open space est vide : aucune session active ou récente.",
+  "office.plan": "Plan",
+  "office.tasks_above": "{n} de plus au-dessus",
+  "office.tasks_below": "{n} de plus en dessous",
+  "office.recap": "Récap",
+  "office.recap_at": "Récap, {when}",
+  "office.agent_wrote": "L’agent a écrit en dernier",
+  "office.you_wrote": "Vous avez écrit en dernier",
+  "office.you_wrote_at": "Vous avez écrit en dernier, {when}",
+  "office.started": "Démarrée {when}",
+  "office.prompts": { "one": "{n} prompt", "many": "{n} de prompts", "other": "{n} prompts" },
+  "office.subagents": { "one": "{n} sous-agent", "many": "{n} de sous-agents", "other": "{n} sous-agents" },
+  "office.plans": { "one": "{n} plan", "many": "{n} de plans", "other": "{n} plans" }
+}

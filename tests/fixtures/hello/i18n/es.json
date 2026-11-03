@@ -1,0 +1,12 @@
+{
+  "hello.title": "Hola",
+  "hello.dock_title": "Función de ejemplo: quién saludó",
+  "hello.hide": "Ocultar",
+  "hello.name": "Nombre",
+  "hello.name_placeholder": "Tu nombre",
+  "hello.say": "Saludar",
+  "hello.nobody": "Nadie todavía",
+  "hello.card": { "one": "{n} palabra en el título", "many": "{n} de palabras en el título", "other": "{n} palabras en el título" },
+  "hello.drawer": { "one": "El título tiene {n} palabra.", "many": "El título tiene {n} de palabras.", "other": "El título tiene {n} palabras." },
+  "hello.bad_name": "name: una cadena no vacía de hasta {max} caracteres"
+}

@@ -1,0 +1,20 @@
+/* The supervisor's digest above the board and the office. */
+.digest { margin-top: 16px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 16px; align-items: start; padding: 11px 14px 12px;
+  background: color-mix(in srgb, var(--link) 7%, var(--sheet)); border: var(--border-w) solid var(--rule); border-left: 4px solid var(--link);
+  border-radius: var(--radius); }
+.digest-head { grid-column: 1; display: flex; gap: 8px; align-items: baseline; font-size: 12.5px; color: var(--ink-3); }
+.digest-head b { font: 600 12.5px var(--text); text-transform: uppercase; letter-spacing: .05em; color: var(--link); }
+.digest-text { grid-column: 1; margin: 0; font-size: 14px; line-height: 1.5; color: var(--ink); white-space: pre-line; overflow-wrap: anywhere; }
+.stage:has(#results:not(.hidden)) .digest { display: none; }
+.digest-acts { grid-column: 2; grid-row: 1 / span 2; display: flex; gap: 6px; align-items: center; }
+.digest-acts .ghost { padding: 4px 11px; font-size: 13px; }
+.digest-acts .digest-open { color: var(--ink); border-color: var(--ink-3); }
+.digest-acts .digest-x { padding: 4px; display: inline-flex; border-color: transparent; }
+.digest-acts .digest-x svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+@media (max-width: 720px) { .digest { grid-template-columns: minmax(0, 1fr); } .digest-acts { grid-column: 1; grid-row: auto; margin-top: 4px; } }
+
+[data-skin="konstruktor"] .digest { border: 2px solid var(--edge); border-left-width: 8px; border-radius: 0; background: var(--sheet); }
+[data-skin="konstruktor"] .digest-head b { color: var(--ink); }
+[data-skin="dispatch"] .digest { border-radius: 4px; border-left-width: 8px; background: color-mix(in srgb, var(--ink) 7%, var(--sheet)); }
+[data-skin="dispatch"] .digest-head b { font: 800 14px var(--display); letter-spacing: .04em; color: var(--ink); }
+[data-skin="dispatch"] .digest-text { font-size: 15.5px; }

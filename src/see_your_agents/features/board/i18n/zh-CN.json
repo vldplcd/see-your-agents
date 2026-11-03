@@ -1,0 +1,32 @@
+{
+  "board.title": "看板",
+  "board.column.needs_you": "需要你",
+  "board.column.working": "工作中",
+  "board.column.your_move": "轮到你",
+  "board.column.recent": "最近关闭",
+  "board.column.archive": "归档",
+  "board.empty.needs_you": "没有人在等你。安心工作吧。",
+  "board.empty.working": "现在没有人在工作。",
+  "board.empty.your_move": "没有等待下一步的会话。",
+  "board.empty.recent": "最近三天没有关闭任何会话。",
+  "board.empty.archive": "归档为空。",
+  "board.hint.recent": {
+    "other": "进程已自行结束。{n} 天无活动后，卡片会移至归档；“归档”可立即移入。"
+  },
+  "board.hint.archive": "旧会话和你标记为“完成”的会话。用上方的搜索可以找到它们。",
+  "board.archive.show": "显示归档",
+  "board.archive.folded": "旧的和已结束的会话。点击显示。",
+  "board.archive.more": "显示更多（{n}）",
+  "board.archive.fold": "收起",
+  "board.peer.sent": "已发送：{text}",
+  "board.peer.received": "已收到：{text}",
+  "board.card.waiting": "已等待 {time}",
+  "board.card.archive_in": "{when}归档",
+  "board.card.context": "上下文 {pct}%",
+  "board.card.context_title": "上下文窗口：{text}",
+  "board.card.archive_now": "立即移至归档",
+  "board.card.archive": "归档",
+  "board.card.chat": "对话",
+  "board.in_hours": "{n} 小时后",
+  "board.in_days": { "other": "{n} 天后" }
+}

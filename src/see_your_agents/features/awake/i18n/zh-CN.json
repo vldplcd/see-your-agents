@@ -1,0 +1,8 @@
+{
+  "awake.title": "睡眠",
+  "awake.switch": "代理工作时保持 Mac 唤醒",
+  "awake.off": "已关闭：Mac 照常进入睡眠。",
+  "awake.active": "代理正在工作：Mac 不会自行进入睡眠。合上盖子仍会让它睡眠。",
+  "awake.idle": "现在没有代理在工作：Mac 照常进入睡眠。",
+  "awake.bad_enabled": "enabled: true 或 false"
+}

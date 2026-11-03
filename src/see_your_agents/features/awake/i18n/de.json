@@ -1,0 +1,8 @@
+{
+  "awake.title": "Ruhezustand",
+  "awake.switch": "Mac wach halten, solange Agenten arbeiten",
+  "awake.off": "Aus: Der Mac geht wie gewohnt in den Ruhezustand.",
+  "awake.active": "Gerade arbeiten Agenten: Der Mac geht nicht von selbst in den Ruhezustand. Beim Zuklappen schläft er trotzdem ein.",
+  "awake.idle": "Gerade arbeitet niemand: Der Mac geht wie gewohnt in den Ruhezustand.",
+  "awake.bad_enabled": "enabled: true oder false"
+}

@@ -1,0 +1,17 @@
+{
+  "office.title": "Офис",
+  "office.no_project": "без проекта",
+  "office.empty": "В офисе пусто: нет живых и недавних сессий.",
+  "office.plan": "План",
+  "office.tasks_above": "выше ещё {n}",
+  "office.tasks_below": "ниже ещё {n}",
+  "office.recap": "Сводка",
+  "office.recap_at": "Сводка, {when}",
+  "office.agent_wrote": "Агент последним написал",
+  "office.you_wrote": "Ты последним писал",
+  "office.you_wrote_at": "Ты последним писал, {when}",
+  "office.started": "Начата {when}",
+  "office.prompts": { "one": "{n} промпт", "few": "{n} промпта", "many": "{n} промптов", "other": "{n} промпта" },
+  "office.subagents": { "one": "{n} субагент", "few": "{n} субагента", "many": "{n} субагентов", "other": "{n} субагента" },
+  "office.plans": { "one": "{n} план", "few": "{n} плана", "many": "{n} планов", "other": "{n} плана" }
+}

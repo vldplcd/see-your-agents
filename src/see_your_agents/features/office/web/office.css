@@ -1,0 +1,49 @@
+/* Office: rooms per project, a desk per session, the hover card. The figures themselves (.body, .eyes, .top,
+   status colours) are in base.css: avatars in the chat and the looks editor draw them too. */
+.office { padding-block: 30px 48px; display: flex; flex-wrap: wrap; align-items: flex-start; gap: 30px 18px; }
+.room { border: 2px solid var(--ink-3); border-radius: 4px; padding: 30px 14px 14px; position: relative; min-height: 150px;
+  flex: 0 1 calc(var(--desks) * 118px + 32px); max-width: 100%;
+  background: repeating-linear-gradient(0deg, transparent 0 23px, var(--floor-line) 23px 24px),
+              repeating-linear-gradient(90deg, transparent 0 23px, var(--floor-line) 23px 24px); }
+.room-name { position: absolute; top: -11px; left: 14px; background: var(--paper); padding: 0 8px;
+  font: 700 13px var(--display); color: var(--ink-2); white-space: nowrap; }
+.room-door { position: absolute; bottom: -2px; right: 28px; width: 46px; height: 2px; background: var(--paper); }
+.desks { display: flex; flex-wrap: wrap; gap: 12px 14px; }
+.desk { position: relative; width: 104px; border: 0; background: transparent; cursor: pointer; padding: 0; text-align: center; }
+.desk svg { width: 104px; height: 83px; display: block; overflow: visible; }
+.desk .label { font-size: 11px; color: var(--ink-2); margin-top: 4px; line-height: 1.25; display: -webkit-box;
+  -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.desk:hover .label { color: var(--ink); }
+.bubble { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); font: 700 12px var(--display);
+  background: var(--sheet); border: 1px solid var(--rule); border-radius: var(--radius-sm); padding: 0 6px; white-space: nowrap; }
+.d-needs_you .bubble { color: var(--on-needs); background: var(--needs); border-color: var(--needs); animation: hand 1s ease-in-out infinite alternate; }
+.d-your_move .bubble { color: var(--move-ink); }
+@keyframes hand { to { transform: translateX(-50%) translateY(-4px); } }
+/* hover card over a desk */
+.peek { position: fixed; z-index: 15; width: min(340px, calc(100vw - 24px)); background: var(--sheet); color: var(--ink);
+  border: var(--border-w) solid var(--edge); border-radius: var(--radius); padding: 12px 14px 10px; box-shadow: var(--shadow);
+  pointer-events: none; font-size: 13.5px; animation: peek-in .12s ease-out; }
+.peek h3 { font: 600 15px/1.3 var(--text); margin: 0 0 2px; }
+.peek .status-line { margin: 2px 0 6px; font-size: 13.5px; }
+.peek .callout { margin: 4px 0 6px; }
+.peek h4 { margin: 10px 0 3px; font: 600 12px var(--text); color: var(--ink-3); }
+.peek p { margin: 0; }
+.peek .callout p { margin: 4px 0; }
+.peek .clamp { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; color: var(--ink-2); }
+.peek .clamp.two { -webkit-line-clamp: 2; }
+.peek .tasks li { font-size: 13px; padding: 2px 0 2px 22px; }
+.peek .tasks li::before { top: 6px; width: 10px; height: 10px; }
+.peek .tasks .gap { color: var(--ink-3); font-size: 12px; }
+.peek .tasks .gap::before { display: none; }
+.peek .meta { margin-top: 10px; color: var(--ink-3); font-size: 12px; }
+.peek .chips { margin: 8px 0 0; }
+@keyframes peek-in { from { opacity: 0; transform: translateY(3px); } }
+
+[data-skin="konstruktor"] .room { border: 3px solid var(--edge); border-radius: 0; background: var(--sheet); }
+[data-skin="konstruktor"] .room-name { background: var(--edge); color: var(--sheet); top: -13px; padding: 1px 10px; font-weight: 700; }
+[data-skin="konstruktor"] .room-door { height: 3px; bottom: -3px; }
+[data-skin="dispatch"] .room { border: 1px solid var(--edge); border-radius: 6px;
+  background: repeating-radial-gradient(circle at 50% 140%, transparent 0 36px, var(--floor-line) 36px 37px),
+              color-mix(in srgb, var(--ink) 6%, transparent); }
+[data-skin="dispatch"] .room-name { font: 800 16px var(--display); letter-spacing: .03em; top: -12px; }
+[data-skin="dispatch"] .room-door { display: none; }

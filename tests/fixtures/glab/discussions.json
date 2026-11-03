@@ -1,0 +1,120 @@
+[
+ {
+  "id": "22ee7a2a",
+  "individual_note": true,
+  "notes": [
+   {
+    "id": 842754,
+    "type": null,
+    "body": "...",
+    "author": {
+     "username": "author"
+    },
+    "system": true,
+    "resolvable": false,
+    "resolved": null
+   }
+  ]
+ },
+ {
+  "id": "200bd8ad",
+  "individual_note": true,
+  "notes": [
+   {
+    "id": 842755,
+    "type": null,
+    "body": "...",
+    "author": {
+     "username": "author"
+    },
+    "system": true,
+    "resolvable": false,
+    "resolved": null
+   }
+  ]
+ },
+ {
+  "id": "71270045",
+  "individual_note": false,
+  "notes": [
+   {
+    "id": 845040,
+    "type": "DiscussionNote",
+    "body": "...",
+    "author": {
+     "username": "reviewer"
+    },
+    "system": false,
+    "resolvable": true,
+    "resolved": false
+   },
+   {
+    "id": 845418,
+    "type": "DiscussionNote",
+    "body": "...",
+    "author": {
+     "username": "author"
+    },
+    "system": false,
+    "resolvable": true,
+    "resolved": false
+   }
+  ]
+ },
+ {
+  "id": "1cebaa02",
+  "individual_note": false,
+  "notes": [
+   {
+    "id": 845062,
+    "type": "DiscussionNote",
+    "body": "...",
+    "author": {
+     "username": "reviewer"
+    },
+    "system": false,
+    "resolvable": true,
+    "resolved": false
+   },
+   {
+    "id": 845419,
+    "type": "DiscussionNote",
+    "body": "...",
+    "author": {
+     "username": "author"
+    },
+    "system": false,
+    "resolvable": true,
+    "resolved": false
+   }
+  ]
+ },
+ {
+  "id": "resolved",
+  "individual_note": false,
+  "notes": [
+   {
+    "id": 1,
+    "type": "DiffNote",
+    "body": "...",
+    "author": {
+     "username": "reviewer"
+    },
+    "system": false,
+    "resolvable": true,
+    "resolved": true
+   },
+   {
+    "id": 2,
+    "type": "DiffNote",
+    "body": "...",
+    "author": {
+     "username": "author"
+    },
+    "system": false,
+    "resolvable": true,
+    "resolved": true
+   }
+  ]
+ }
+]

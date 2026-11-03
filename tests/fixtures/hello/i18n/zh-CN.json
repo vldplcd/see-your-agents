@@ -1,0 +1,12 @@
+{
+  "hello.title": "你好",
+  "hello.dock_title": "示例功能：谁打过招呼",
+  "hello.hide": "隐藏",
+  "hello.name": "名字",
+  "hello.name_placeholder": "你的名字",
+  "hello.say": "打招呼",
+  "hello.nobody": "还没有人",
+  "hello.card": { "other": "标题含 {n} 个词" },
+  "hello.drawer": { "other": "标题中有 {n} 个词。" },
+  "hello.bad_name": "name: 不超过 {max} 个字符的非空字符串"
+}
