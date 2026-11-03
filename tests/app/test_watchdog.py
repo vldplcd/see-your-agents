@@ -133,7 +133,8 @@ def test_any_other_exit_code_is_the_parents(tmp_path):
     assert watchdog.supervise([sys.executable, str(script)], 1) == 3
 
 
-def test_an_accepted_build_that_answers_is_kept(tmp_path):
+def test_an_accepted_build_that_answers_is_kept(tmp_path, monkeypatch):
+    monkeypatch.setattr(watchdog, "HEALTH_WAIT_S", 60.0)  # a cold CI runner may need more than 15 s
     port = free_port()
     repo, merge = accepted_merge(tmp_path, datetime.now(UTC))
     cmd, state = child(tmp_path, "healthy", port)
@@ -207,7 +208,7 @@ def run_watchdog(child_argv: list[str], port: int = 1, setup: str = "") -> subpr
     return subprocess.Popen([sys.executable, "-c", runner])
 
 
-def wait_for(check, timeout: float = 10) -> None:
+def wait_for(check, timeout: float = 30) -> None:
     deadline = time.monotonic() + timeout
     while not check() and time.monotonic() < deadline:
         time.sleep(0.05)

@@ -38,6 +38,10 @@ jobs:
       - name: Install
         run: uv sync --locked
 
+      # The first load of DuckDB's native library is slow on a fresh macOS runner; pay it before the timed tests.
+      - name: Warm up
+        run: uv run python -c "import duckdb, see_your_agents.app.cli"
+
       - name: Lint
         run: |
           uv run ruff check src tests

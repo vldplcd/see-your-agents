@@ -913,7 +913,7 @@ def alive(pid: int) -> bool:
     return True
 
 
-def eventually(check, timeout: float = 15) -> bool:
+def eventually(check, timeout: float = 60) -> bool:  # generous: a cold CI runner starts a child server slowly
     deadline = time.monotonic() + timeout
     while not check():
         if time.monotonic() > deadline:
