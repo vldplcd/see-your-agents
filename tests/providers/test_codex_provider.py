@@ -98,6 +98,7 @@ def test_the_terminal_command_resumes_a_thread_in_its_folder_once_it_has_a_rollo
 
 def test_codex_failing_to_tell_who_runs_leaves_the_others_on_the_board(monkeypatch, capsys):
     monkeypatch.setattr(codex_live, "lock_files", broken)
+    monkeypatch.setattr(Codex, "available", lambda self: True)  # CI has no codex CLI and no ~/.codex
     monkeypatch.setattr(providers, "PROVIDERS", (Codex(), Other()))
 
     assert list(providers.live()) == ["o1"]
