@@ -322,7 +322,8 @@ def test_the_checks_and_preview_run_under_a_sandbox_profile_confined_to_the_work
             ["/usr/bin/sandbox-exec", "-p", profile, sys.executable, "-c", code],
             capture_output=True, text=True, timeout=30,
         )  # fmt: skip
-        return (out.stdout + out.stderr).strip()
+        # stdout only: Python 3.13 tracebacks on stderr quote the failing line, "print('OK')" included
+        return out.stdout.strip()
 
     try:
         assert "OK" in under(f"open({str(worktree / 'a.txt')!r},'w').write('x'); print('OK')")
