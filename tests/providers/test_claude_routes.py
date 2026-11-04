@@ -17,6 +17,7 @@ def fresh():
     claude_routes._runs.clear()
     yield
     claude_routes.reset_caches()
+    claude_routes._runs.clear()  # a fake turn left here would hold the session busy in other files
 
 
 def live(status="idle", kind="interactive", pid=500, **extra):
