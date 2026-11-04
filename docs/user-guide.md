@@ -193,6 +193,8 @@ session itself does not change.
 
 Click a card:
 
+- buttons, as in the chat's header: "Open chat", "Archive" (marks the session done; "Bring back" undoes it),
+  "Finish" for a live session (asks first, stops the agent's process and archives it), "Fork";
 - what is needed from you;
 - the command that opens the session in a terminal (`claude --resume`, `codex resume`);
 - "Where things stand": the checklist and the latest recap;

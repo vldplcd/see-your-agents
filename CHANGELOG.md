@@ -10,6 +10,8 @@ All notable changes to this project are documented here. The format follows
 
 - In the office, an empty desk at the end of each room starts a new session in that project: it opens New session
   with the room's folder filled in.
+- The session panel has the chat's buttons: "Archive" for any session not archived yet ("Bring back" for one marked
+  done) and "Finish" for a live one, which asks first, stops the process and archives the session.
 
 ### Changed
 

@@ -186,7 +186,9 @@ a.chip:hover { border-color: var(--link); color: var(--link); }
 .tasks li.in_progress::before { border-color: var(--move); background: var(--move-tint); }
 .tasks li.in_progress::after { content: attr(data-now); margin-left: 8px; font-size: 11.5px; font-weight: 500; color: var(--move-ink); }
 .plan-btn { display: block; width: 100%; text-align: left; margin-bottom: 6px; }
-.d-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 8px; }
+.d-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 4px 0 8px; }
+.d-actions .d-ask { flex-basis: 100%; font-size: 13.5px; color: var(--ink-2); }
+.d-actions .danger { background: var(--needs); border-color: var(--needs); color: var(--on-needs); }
 .d-chat { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 .d-chat:hover { color: var(--paper); }
 details.d-more > summary { cursor: pointer; font: 600 14px var(--text); padding: 2px 0; }

@@ -554,7 +554,9 @@ function drawerHtml(d) {
     ${chips(d)}
     ${now.length ? `<div class="callout">${now.join("")}</div>` : ""}
     <div class="d-actions"><button class="ghost d-chat" data-chat="${esc(d.session_id)}">${t("app.drawer.open_chat")}</button>
-      ${d.column === "recent" ? `<button class="ghost" data-archive="${esc(d.session_id)}">${t("app.drawer.archive")}</button>` : ""}
+      ${d.done ? `<button class="ghost" data-unarchive="${esc(d.session_id)}">${t("app.drawer.unarchive")}</button>`
+        : d.column !== "archive" ? `<button class="ghost" data-archive="${esc(d.session_id)}">${t("app.drawer.archive")}</button>` : ""}
+      ${d.live && can(d, "stop") ? `<button class="ghost" data-stop="${esc(d.session_id)}">${t("app.drawer.stop")}</button>` : ""}
       ${d.can_fork ? `<button class="ghost" data-fork="${esc(d.session_id)}" title="${t("app.drawer.fork_title")}">${t("app.drawer.fork")}</button>` : ""}</div>
     ${d.resume_command ? `<div class="cmd"><code>${esc(d.resume_command)}</code><button class="ghost" id="copy">${t("app.drawer.copy")}</button></div>` : ""}
     ${section(t("app.drawer.now"), (tasks || "") + (recaps.length ? `<p style="color:var(--ink-2)">${esc(recaps[recaps.length - 1].text)}</p>` : (tasks ? "" : `<p style="color:var(--ink-2)">${esc(d.last_assistant_text || t("app.drawer.no_recaps"))}</p>`)))}
@@ -626,15 +628,37 @@ document.addEventListener("keydown", (e) => {
   else if ($("#q").value) { $("#q").value = ""; showSearch(""); }
 });
 document.addEventListener("click", (e) => {
-  const arch = e.target.closest("[data-archive]");
-  if (arch) { archiveNow(arch.dataset.archive); return; }
+  const b = e.target.closest("[data-archive], [data-unarchive], [data-stop], [data-stop-yes], [data-stop-no]");
+  if (b?.dataset.archive) return setDone(b.dataset.archive, true);
+  if (b?.dataset.unarchive) return setDone(b.dataset.unarchive, false);
+  if (b?.dataset.stop) return askStop(b.closest(".d-actions"), b.dataset.stop);
+  if (b?.dataset.stopYes) return stopSession(b.closest(".d-actions"), b.dataset.stopYes);
+  if (b?.dataset.stopNo) return openDrawer(b.dataset.stopNo);
   const target = e.target.closest(".card[data-id], .desk[data-id], .hit[data-id]");
   if (target && !e.target.closest("a")) openDrawer(target.dataset.id);
 });
-async function archiveNow(id) {
-  const r = await postJson(`/api/chat/${encodeURIComponent(id)}/done`, { done: true }).catch(() => null);
-  if (r?.ok && state.openId === id) closeDrawer();
+// A session's done mark and its stop: the chat's endpoints (features/chat/delivery.py), or the demo page's fake.
+const sessionAct = (id, name, body = {}) => (window.SYA_API?.chat
+  ? window.SYA_API.chat.act(id, name, body)
+  : postJson(`/api/chat/${encodeURIComponent(id)}/${name}`, body)).catch(() => null);
+async function setDone(id, done) {
+  const r = await sessionAct(id, "done", { done });
+  if (r?.ok && state.openId === id) { if (done) closeDrawer(); else openDrawer(id); }
   refresh();
+}
+// "Finish" asks first, in the panel's own row: the agent's process stops and the session goes to the archive.
+function askStop(row, id) {
+  row.innerHTML = `<span class="d-ask">${t("app.drawer.stop_ask")}</span>
+    <button class="danger" data-stop-yes="${esc(id)}">${t("app.drawer.stop_yes")}</button>
+    <button class="ghost" data-stop-no="${esc(id)}">${t("app.drawer.stop_no")}</button>`;
+  row.querySelector("[data-stop-no]").focus();
+}
+async function stopSession(row, id) {
+  row.querySelectorAll("button").forEach((x) => { x.disabled = true; });
+  const r = await sessionAct(id, "stop");
+  if (r?.ok) { if (state.openId === id) closeDrawer(); return refresh(); }
+  row.querySelector(".d-ask").textContent = r?.data?.error || t("app.drawer.no_answer");
+  row.querySelectorAll("button").forEach((x) => { x.disabled = false; });
 }
 
 /* ---------- views, filter, search ---------- */
