@@ -4,7 +4,8 @@ done, focus.
 How a message reaches a session, how it stops and which window shows it is its provider's business
 (`Provider.route`, `send`, `resume`, `stop`, `focus`; Claude's are core/providers/claude/routes.py). Here: the
 request's checks, the uploads, the reply, `start_resume`, which the supervisor's resume_session and the
-morning review use for a stopped session, and `send_signed`, the supervisor's send_to_session. The VS Code
+morning review use for a stopped session, `send_signed`, the supervisor's send_to_session, and `stop_session`
+and `mark_done`: the page's Finish and Archive, the supervisor's stop_session and archive_session. The VS Code
 bridge (bridge.py) reaches Claude's routes through the chat's `Feature.setup` (chat/__init__.py).
 """
 
@@ -182,21 +183,31 @@ def upload(app: App, session_id: str, body: bytes, headers: Headers) -> dict:
     return {"path": str((folder / final).resolve()), "name": final}
 
 
-def stop(app: App, session_id: str, body: bytes, headers: Headers) -> dict:
+def stop_session(app: App, session_id: str) -> None:
+    """A live session's process stops by its provider (a pid check, `claude stop` for a background job), and
+    the session goes to the archive."""
     provider, session = _session(app, session_id)
     if session.live is None:
         raise DeliveryError("chat.not_running", HTTPStatus.CONFLICT)
     provider.stop(session)
     done.mark(session_id, True)
+
+
+def mark_done(app: App, session_id: str, flag: bool) -> None:
+    _session(app, session_id)
+    done.mark(session_id, flag)
+
+
+def stop(app: App, session_id: str, body: bytes, headers: Headers) -> dict:
+    stop_session(app, session_id)
     return {"stopped": True}
 
 
 def set_done(app: App, session_id: str, body: bytes, headers: Headers) -> dict:
-    _session(app, session_id)
     flag = _json_body(body).get("done")
     if not isinstance(flag, bool):
         raise DeliveryError("chat.bad_done")
-    done.mark(session_id, flag)
+    mark_done(app, session_id, flag)
     return {"done": flag}
 
 

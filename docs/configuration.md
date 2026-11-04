@@ -94,6 +94,7 @@ supervisor (`sya supervisor`) and, if needed, run `sya supervisor install` again
 | `list_groups`, `group_feed` | read | group chats and their feed |
 | `send_to_session` | control | a message to any session through its program (Codex via `codex queue`), with confirmation |
 | `resume_session`, `start_agent`, `post_digest` | control | a turn in a closed session, a new background agent, a digest on the board |
+| `stop_session`, `archive_session` | control | stop a live session and archive it; archive one (never one waiting for you); with confirmation |
 | `group_post` | control | a supervisor entry in a group feed (not delivered to members, no confirmation) |
 | `todo_add`, `todo_update` | control | a to-do item into the list, the "done" mark, urgency, text; no confirmation |
 | `request_change` | control | a build: change the dashboard itself ([user-guide.md](user-guide.md#flexible-dashboard-the-builder)) |

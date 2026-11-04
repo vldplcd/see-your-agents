@@ -306,6 +306,10 @@ which also lists its MCP tools.
   other sessions' transcripts, and your general permissions do not apply to it.
 - **Closed sessions and new agents.** For them there are the `resume_session` (one turn via `claude -p --resume`) and
   `start_agent` (`claude --bg`) tools. Both also ask for confirmation.
+- **Closing sessions.** `stop_session` stops a live session's process the way "Finish" does and archives it;
+  `archive_session` only marks a session done. Each call asks for confirmation. A session that is waiting for you
+  (a permission prompt, a question) is never archived by the supervisor, so it cannot drop off the board unseen; it
+  does not stop itself either.
 - **Codex and everything `SendMessage` cannot reach.** `send_to_session` writes to any session through its program:
   Codex via `codex queue`, a live Claude Code session via the courier on behalf of `Supervisor`, a closed one via a
   `resume` turn. (A supervisor session started before agent-facing text was English is still named «Супервизор»;
@@ -316,7 +320,8 @@ which also lists its MCP tools.
 - **Supervisor not running.** The chat, a group (a message without @ or with its handle) and "Morning review"
   continue it with a single `claude -p --resume` turn, but with its own settings: the same `--tools`, rules, MCP
   (`--strict-mcp-config`), prompt and `default` mode. There is no one to ask for confirmation in such a turn, so
-  `SendMessage`, `send_to_session`, `resume_session`, `start_agent` and `request_change` are rejected: the supervisor
+  `SendMessage`, `send_to_session`, `resume_session`, `start_agent`, `stop_session`, `archive_session` and
+  `request_change` are rejected: the supervisor
   will ask you to open it in a terminal (`uv run sya supervisor`).
 - **Digest.** The dashboard shows the supervisor's latest digest (`post_digest`) above the board. The supervisor is
   pinned first in the chat panel. Messages between sessions are visible in both sides' conversations and as a line on

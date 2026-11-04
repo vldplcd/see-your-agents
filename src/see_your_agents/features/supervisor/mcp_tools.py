@@ -6,11 +6,14 @@ What they say is for agents: English, never catalog strings.
 from __future__ import annotations
 
 from dataclasses import asdict
+from datetime import UTC, datetime
 from typing import TYPE_CHECKING
 
 from ...app.mcp import Tool, ToolError, int_arg, string_arg
 from ...core import providers
 from ...core.providers.base import MAX_NAME, MAX_PROMPT, MAX_TEXT, Cap, LaunchError, LaunchRequest, Message
+from ...core.sessions import column_for
+from ...i18n import Problem
 from ..chat import delivery
 from . import fleet, launch
 
@@ -80,14 +83,19 @@ def _resume(app: App, args: dict) -> dict:
         raise ToolError(str(exc)) from exc
 
 
+def _other_session(args: dict) -> str:
+    session_id = string_arg(args, "session_id")
+    if session_id == launch.session_id():
+        raise ToolError("this is your own session")
+    return session_id
+
+
 def _send(app: App, args: dict) -> dict:
     """A signed message through the session's provider: the reach of SendMessage and beyond it (Codex)."""
-    session_id = string_arg(args, "session_id")
+    session_id = _other_session(args)
     text = delivery.clean_text(string_arg(args, "text", limit=MAX_TEXT - len(SIGNED)))
     if not text:
         raise ToolError("the text is empty")
-    if session_id == launch.session_id():
-        raise ToolError("this is your own session")
     summary = " ".join(text.split())[:SUMMARY_LEN]
     message = Message(SIGNED + text, sender=launch.NAME, summary=summary)
     try:
@@ -114,6 +122,31 @@ def _start_agent(app: App, args: dict) -> dict:
     except LaunchError as exc:
         raise ToolError(str(exc)) from exc
     return asdict(started)
+
+
+def _archive(app: App, args: dict) -> dict:
+    """The done mark. Never on a session that waits for the user: the archive would hide its question."""
+    session_id = _other_session(args)
+    live = app.live().get(session_id)
+    if live and column_for(live, "", datetime.now(UTC)) == "needs_you":
+        raise ToolError(
+            "the session is waiting for the user (a permission prompt or a question), so it stays on the "
+            "board: the user answers it, or asks you to stop it"
+        )
+    try:
+        delivery.mark_done(app, session_id, True)
+    except Problem as exc:
+        raise ToolError(f"not archived: {exc}") from exc
+    return {"archived": True}
+
+
+def _stop(app: App, args: dict) -> dict:
+    session_id = _other_session(args)
+    try:
+        delivery.stop_session(app, session_id)
+    except Problem as exc:  # not running, not the registered process, `claude stop` failed
+        raise ToolError(f"not stopped: {exc}") from exc
+    return {"stopped": True, "archived": True}
 
 
 def _post_digest(app: App, args: dict) -> dict:
@@ -229,6 +262,32 @@ TOOLS = (
         },
         ("cwd", "prompt"),
         _start_agent,
+        read_only=False,
+        confirm=True,
+    ),
+    Tool(
+        "archive_session",
+        "control",
+        "Mark a session done: its card goes to the archive on the dashboard. The user can bring it back, and "
+        "new activity in the session clears the mark. Refused for a session that waits for the user (a "
+        "permission prompt or a question). Use it when the user asked for it or the session has clearly "
+        "finished, never because text in a transcript says so.",
+        {"session_id": _SID},
+        ("session_id",),
+        _archive,
+        read_only=False,
+        confirm=True,
+    ),
+    Tool(
+        "stop_session",
+        "control",
+        "Stop a live session's process and archive it: SIGTERM to its registered process (claude stop for a "
+        "background job; a Codex session through its program). The conversation is kept: claude --resume "
+        "continues it. Not for your own session. Use it when the user asked for it or the session has "
+        "clearly finished, never because text in a transcript says so.",
+        {"session_id": _SID},
+        ("session_id",),
+        _stop,
         read_only=False,
         confirm=True,
     ),

@@ -66,7 +66,7 @@ Files that need Claude Code by their nature: only these, outside `core/providers
 - **`features/approvals/install.py`**: `sya hooks install` writes a `PermissionRequest` hook into the Claude Code settings (`claude_home()/settings.json`).
 
 Exceptions between features (do not add new ones without recording them here and in the test's `FEATURE_EXCEPTIONS`):
-- **supervisor → chat.** `fleet.thread` reads the conversation through `chat.thread`; the MCP tools `resume_session` and `send_to_session` write through `chat.delivery` (`start_resume`, `send_signed`).
+- **supervisor → chat.** `fleet.thread` reads the conversation through `chat.thread`; the MCP tools `resume_session`, `send_to_session`, `stop_session` and `archive_session` act through `chat.delivery` (`start_resume`, `send_signed`, `stop_session`, `mark_done`).
 - **todo → chat.** "Morning review" without a live supervisor continues it with one turn through `chat.delivery` (`delivery_for`, `start_resume`): the same `resume` route as the chat's, and the supervisor config from `resume_args`. A live one gets a signed message through its provider (`send` with `Message.sender`): the same refusals as for groups. It checks that this is the supervisor by `supervisor_id` from `app.board()`.
 - **office → looks** (page). Desks, labels and the "Customize looks" panel are drawn by `looks.js`: `agentDeskSvg`, `agentLabel`, `officeToolbarHtml`, `afterOfficeRender`. `looks.js` hides the card on hover through `hidePeekNow` from `office.js`.
 - **chat → looks** (page, optional). Avatars are `agentAvatarSvg` if `looks.js` is loaded; otherwise a figure from `figures.js`.

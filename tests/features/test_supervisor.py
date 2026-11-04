@@ -12,7 +12,8 @@ from fakes import FakeApp, codex_record, fake_codex_queue, no_processes, record_
 from see_your_agents.app import cli
 from see_your_agents.app.feature import Feature
 from see_your_agents.app.mcp import Tool, ToolError
-from see_your_agents.core.providers.base import LiveSession
+from see_your_agents.core import done
+from see_your_agents.core.providers.base import LiveSession, Status
 from see_your_agents.core.providers.claude import routes as claude_routes
 from see_your_agents.core.providers.codex import queue as codex_queue
 from see_your_agents.features import FEATURES
@@ -283,9 +284,10 @@ def codex_live(host="daemon", status="idle"):
     return LiveSession(CX, "interactive", status, host=host, provider="codex")
 
 
-def test_send_to_session_asks_the_user_first_also_in_a_one_turn_resume_of_the_supervisor(tmp_path):
-    qualified = "mcp__sya_control__send_to_session"
-    assert (SEND.scope, SEND.confirm, SEND.read_only) == ("control", True, False)
+@pytest.mark.parametrize("name", ["send_to_session", "stop_session", "archive_session"])
+def test_a_tool_that_acts_on_a_session_asks_the_user_first_also_in_a_one_turn_resume(tmp_path, name):
+    tool, qualified = next(t for t in mcp_tools.TOOLS if t.name == name), f"mcp__sya_control__{name}"
+    assert (tool.scope, tool.confirm, tool.read_only) == ("control", True, False)
     perms = supervisor.permissions(FEATURES)
     assert qualified in perms["ask"] and qualified not in perms["allow"]
 
@@ -355,3 +357,59 @@ def test_resume_session_sends_the_supervisor_to_send_to_session_for_codex(monkey
     for app in (codex_app(), codex_app(codex_live())):
         with pytest.raises(ToolError, match="send_to_session"):
             RESUME.run(app, {"session_id": CX, "text": "привет"})
+
+
+# ---- stop_session, archive_session ---------------------------------------------------------------
+
+STOP = next(t for t in mcp_tools.TOOLS if t.name == "stop_session")
+ARCHIVE = next(t for t in mcp_tools.TOOLS if t.name == "archive_session")
+
+
+def closing_app(tmp_path, live=None):
+    """The supervisor and one other session, OTHER, live or not."""
+    _, sid = resumable_supervisor(tmp_path)
+    records = [{"session_id": s, "cwd": str(tmp_path)} for s in (sid, OTHER)]
+    return FakeApp(records, {OTHER: live} if live else {}), sid
+
+
+def test_stop_session_stops_the_process_by_its_provider_and_archives_the_session(tmp_path, monkeypatch):
+    stopped = []
+    monkeypatch.setattr(claude_routes, "stop", lambda session: stopped.append(session.session_id))
+    app, _ = closing_app(tmp_path, LiveSession(OTHER, "interactive", Status.IDLE, pid=700, provider="claude"))
+
+    assert STOP.run(app, {"session_id": OTHER}) == {"stopped": True, "archived": True}
+    assert stopped == [OTHER] and OTHER in done.load()
+
+
+def test_stop_session_refuses_the_supervisor_itself_and_a_session_without_a_process(tmp_path, monkeypatch):
+    monkeypatch.setattr(claude_routes, "stop", lambda session: pytest.fail("nothing may be stopped"))
+    app, sid = closing_app(tmp_path)
+
+    with pytest.raises(ToolError, match="your own session"):
+        STOP.run(app, {"session_id": sid})
+    with pytest.raises(ToolError, match="^not stopped: "):
+        STOP.run(app, {"session_id": OTHER})
+    assert not done.load()
+
+
+def test_archive_session_marks_a_finished_session_done(tmp_path):
+    app, _ = closing_app(tmp_path)
+
+    assert ARCHIVE.run(app, {"session_id": OTHER}) == {"archived": True}
+    assert OTHER in done.load()
+
+
+@pytest.mark.parametrize(
+    "live",
+    [
+        LiveSession(OTHER, "interactive", Status.WAITING, "permission prompt", pid=700, provider="claude"),
+        LiveSession(OTHER, "background", Status.IDLE, needs="confirm: deploy to staging", provider="claude"),
+    ],
+    ids=["permission-prompt", "background-question"],
+)
+def test_archive_session_will_not_hide_a_session_that_waits_for_the_user(tmp_path, live):
+    app, _ = closing_app(tmp_path, live)
+
+    with pytest.raises(ToolError, match="waiting for the user"):
+        ARCHIVE.run(app, {"session_id": OTHER})
+    assert not done.load()

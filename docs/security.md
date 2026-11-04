@@ -148,13 +148,19 @@ open allowlist requires a secret that only the paired tab and only this server p
   (`confirm=True` tools are `ask` rules there).
 - Everything that changes the world outside the dashboard is `scope="control"` with `confirm=True`. There are no MCP
   tools to accept, roll back or reject a build, or to answer a permission prompt.
+- **Closing sessions.** `stop_session` and `archive_session` ask too: text in a transcript could tell the supervisor
+  to stop every agent. Stopping takes the chat's path (the pid checked against the registry, `claude stop` for a
+  background job), so no other process can be signalled, and the supervisor's own session is refused.
+  `archive_session` refuses a session waiting for you: archiving it would hide a permission prompt or a question,
+  even after a careless "yes".
 - The supervisor runs with only `Read`, `Grep`, `Glob`, `ListAgents`, `SendMessage` and the dashboard's MCP
   (`--tools`, `--strict-mcp-config`), in `default` permission mode. In a single `claude -p --resume` turn there is
   nobody to confirm, so the `ask` tools are rejected, not run.
 - **Messages from `Dashboard`.** Everything you write to the supervisor from the chat panel or with "Morning review"
   reaches it from the `Dashboard` session (in older transcripts, «Дашборд»), and it carries it out as your request.
   Any local session that has Bash can take this name. Without confirmation, the supervisor then only reads (sessions,
-  Jira), keeps the to-do list and writes to group feeds; sending to sessions, new agents and builds ask you.
+  Jira), keeps the to-do list and writes to group feeds; sending to sessions, new agents, stopping or archiving
+  sessions and builds ask you.
 
 ## Writing to sessions and the courier
 
