@@ -6,6 +6,8 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-11-04
+
 ### Added
 
 - In the office, an empty desk at the end of each room starts a new session in that project: it opens New session
@@ -22,7 +24,6 @@ All notable changes to this project are documented here. The format follows
   delivered (the courier takes several seconds), the next one can be typed and sent right away, and a session's
   messages go in order. A message that is not delivered comes back to the input field with the reason. Before, a
   courier on its way marked the session as busy, which locked the input with "A reply is already being prepared".
-
 - The page loads nothing from the internet: its fonts (Onest, Unbounded, Jost, Sofia Sans Condensed and Extra
   Condensed) ship with the package instead of coming from Google Fonts, and the demo page carries them inline. They
   are under the SIL Open Font License 1.1, so the package's license is now `MIT AND OFL-1.1`.
@@ -81,6 +82,7 @@ The first public release.
 - **Providers.** Claude Code and Codex sit behind one provider interface, so another agent CLI is a folder plus a
   registry line.
 
-[Unreleased]: https://github.com/vldplcd/see-your-agents/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/vldplcd/see-your-agents/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/vldplcd/see-your-agents/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/vldplcd/see-your-agents/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/vldplcd/see-your-agents/releases/tag/v0.1.0

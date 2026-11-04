@@ -1,6 +1,6 @@
 [project]
 name = "see-your-agents"
-version = "0.1.1"
+version = "0.1.2"
 description = "A local dashboard for Claude Code and Codex CLI sessions: who is working, who is waiting for you, what happened"
 readme = "README.md"
 requires-python = ">=3.11"
