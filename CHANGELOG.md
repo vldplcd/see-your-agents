@@ -8,6 +8,11 @@ All notable changes to this project are documented here. The format follows
 
 ### Changed
 
+- Sending from the chat no longer blocks the input. The message shows in the feed at once as "Sending…" while it is
+  delivered (the courier takes several seconds), the next one can be typed and sent right away, and a session's
+  messages go in order. A message that is not delivered comes back to the input field with the reason. Before, a
+  courier on its way marked the session as busy, which locked the input with "A reply is already being prepared".
+
 - The page loads nothing from the internet: its fonts (Onest, Unbounded, Jost, Sofia Sans Condensed and Extra
   Condensed) ship with the package instead of coming from Google Fonts, and the demo page carries them inline. They
   are under the SIL Open Font License 1.1, so the package's license is now `MIT AND OFL-1.1`.

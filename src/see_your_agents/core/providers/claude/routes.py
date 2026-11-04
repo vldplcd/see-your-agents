@@ -188,12 +188,14 @@ _runs_lock = threading.Lock()
 
 
 def busy(session_id: str) -> bool:
+    """A reply turn (`claude -p --resume`) runs for the session. A courier on its way is not one: the session
+    still takes messages, so the page keeps its input open (`_chat_by_courier` refuses a second courier)."""
     with _runs_lock:
         proc = _runs.get(session_id)
         if proc is not None and proc.poll() is not None:
             del _runs[session_id]
             proc = None
-        return proc is not None or session_id in _couriers
+        return proc is not None
 
 
 # ---- route detection --------------------------------------------------------------------------
@@ -415,8 +417,8 @@ def _signed_by_courier(to: str, message: Message) -> Sent:
 
 
 def _chat_by_courier(session_id: str, to: str, message: Message) -> Sent:
-    """The courier for a chat message: one at a time per session, which counts as busy meanwhile (3-10 s,
-    in the request's own thread)."""
+    """The courier for a chat message: one at a time per session (3-10 s, in the request's own thread). The
+    page sends a session's messages in order, so a second one at once comes only from another tab."""
     with _runs_lock:
         if session_id in _couriers:
             raise SendRefused("app.provider.claude.sending")

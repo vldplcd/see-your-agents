@@ -42,9 +42,14 @@
   /* ---------- state ---------- */
   const chat = {
     sid: "", token: 0, ids: [], els: new Map(), before: null, after: 0, hasMore: false, loaded: false, loading: false,
-    pending: [], echoes: [], files: [], drafts: new Map(), filter: "", showArchive: false, confirmStop: false, confirmTakeover: false, note: "", attach: null,
-    sending: false, sendError: "", stuck: true, pollTimer: 0, built: false, seen: null, src: null, altTakeover: false,
+    pending: [], files: [], drafts: new Map(), filter: "", showArchive: false, confirmStop: false, confirmTakeover: false, note: "", attach: null,
+    sendError: "", stuck: true, pollTimer: 0, built: false, seen: null, src: null, altTakeover: false,
   };
+  // Sent bubbles live per session (chat.pending is the open one's), so one on its way survives a switch.
+  const pendingBy = new Map();
+  const pendingOf = (sid) => pendingBy.get(sid) || pendingBy.set(sid, []).get(sid);
+  // A session's messages go one at a time and in order: sid -> those not delivered yet, the first on its way.
+  const outbox = new Map();
   const sources = new Map();  // id -> {id, items(board), open(key, root), close?()}
   const panels = new Map();  // id -> {id, render(card, root), hint?(card)}: blocks above a session's composer
   const card = (sid = chat.sid) => state.board?.cards.find((c) => c.session_id === sid);
@@ -428,10 +433,12 @@
   const isEcho = (m, p) => p.text && m.text.includes(p.text) && m.at + 10000 >= p.t;  // 10 s clock skew
   function renderPending() {
     const now = Date.now();
-    chat.pending = chat.pending.filter((p) => now - p.t < PENDING_TTL_MS);
-    q(".pend").innerHTML = chat.pending.map((p) => `<div class="msg k-you pending"><div class="bub">
+    // on its way: stays; delivered: waits for the session's own copy, at most PENDING_TTL_MS
+    chat.pending = chat.pending.filter((p) => !p.done || now - p.done < PENDING_TTL_MS);
+    pendingBy.set(chat.sid, chat.pending);
+    q(".pend").innerHTML = chat.pending.map((p) => `<div class="msg k-you pending${p.done ? "" : " on-way"}"><div class="bub">
       ${p.files.length ? `<div class="sent-files">${p.files.map((f) => `<span class="file-chip">${esc(f)}</span>`).join("")}</div>` : ""}
-      ${p.text ? `<div class="plain">${esc(p.text)}</div>` : ""}<time>${t("chat.sent")}</time></div></div>`).join("");
+      ${p.text ? `<div class="plain">${esc(p.text)}</div>` : ""}<time>${p.done ? t("chat.sent") : t("chat.sending")}</time></div></div>`).join("");
   }
   function renderTyping() { q(".typing").classList.toggle("hidden", !isBusy(card())); }
 
@@ -449,7 +456,6 @@
       if (isNew && !prepend) appended = true;
       if (m.kind === "you" || fromHere(m)) {
         const echo = { text: m.text, at: Date.parse(m.at) };
-        chat.echoes = [...chat.echoes.slice(-19), echo];
         const i = chat.pending.findIndex((p) => isEcho(echo, p));
         if (i >= 0) chat.pending.splice(i, 1);
       }
@@ -465,7 +471,7 @@
   /* ---------- loading and polling ---------- */
   function resetThread() {
     chat.ids = []; chat.els.clear(); chat.before = null; chat.after = 0; chat.hasMore = false; chat.loaded = false;
-    chat.loading = false; chat.pending = []; chat.echoes = []; chat.files = []; chat.confirmStop = false; chat.confirmTakeover = false; chat.altTakeover = false; chat.note = ""; chat.attach = null; chat.sending = false;
+    chat.loading = false; chat.pending = pendingOf(chat.sid); chat.files = []; chat.confirmStop = false; chat.confirmTakeover = false; chat.altTakeover = false; chat.note = ""; chat.attach = null;
     q(".msgs").innerHTML = ""; q(".pend").innerHTML = ""; q(".chat-older").textContent = "";
     q(".chat-jump").classList.add("hidden");
     chat.stuck = true;
@@ -528,12 +534,12 @@
     const d = c.delivery, blocked = d && d.can_send === false, replying = !!c.running_reply;
     const uploading = chat.files.some((f) => f.status === "uploading");
     const noFiles = !can(c, "files"), textOnly = peerOnly(c) || noFiles;  // the courier carries text, not files
-    ta.disabled = !!blocked;
+    ta.disabled = !!blocked && !replying;  // the next message can be written while a reply is on its way
     ta.placeholder = blocked ? d.reason || t("chat.blocked") : t("chat.placeholder");
     const attach = q(".comp-attach");
     attach.disabled = !!blocked || textOnly;
     attach.title = noFiles ? NO_FILES : textOnly ? t("chat.courier.no_files") : t("chat.attach");
-    send.disabled = !!blocked || replying || uploading || chat.sending;
+    send.disabled = !!blocked || replying || uploading;
     const note = blocked ? panelHint(c) : "";  // e.g. «answer above» instead of «answer in the terminal»
     if (note) ta.placeholder = note;
     let text = note || (d ? d.reason || "" : t("chat.hint"));
@@ -541,7 +547,7 @@
     if (!blocked && d?.route === "resume" && supStopped(c)) text = SUP_RESUME_NOTE;
     if (!blocked && peerOnly(c)) text = PEER_NOTE;
     if (replying) text = t("chat.replying");
-    if (chat.sending) text = t("chat.sending");
+    if (outbox.has(chat.sid)) text = t("chat.sending");
     // Takeover closes the session in its terminal, so the first press only asks; the second one sends.
     if (chat.confirmTakeover) text = t("chat.confirm_takeover");
     q(".hint-text").textContent = chat.sendError || text;
@@ -589,33 +595,56 @@
       if (sid === chat.sid) renderAttachments();
     }
   }
-  async function submit() {
+  // The message shows in the feed at once and the input is free for the next one; the request runs behind it.
+  function submit() {
     const c = card(), ta = q(".composer textarea");
     const text = ta.value.trim(), ready = chat.files.filter((f) => f.status === "ready");
-    if (!c || chat.sending || (!text && !ready.length) || chat.files.some((f) => f.status === "uploading")) return;
+    if (!c || (!text && !ready.length) || chat.files.some((f) => f.status === "uploading")) return;
     if (c.delivery?.can_send === false || c.running_reply) return;
     if (peerOnly(c) && ready.length) { chat.sendError = t("chat.courier.text_only"); return syncComposer(); }
     const takeover = c.delivery?.route === "takeover" || chat.altTakeover;
     if (takeover && !chat.confirmTakeover) { chat.confirmTakeover = true; return syncComposer(); }
-    const sid = chat.sid, sentAt = Date.now();
-    chat.sending = true; chat.sendError = ""; chat.confirmTakeover = false; chat.altTakeover = false;
-    syncComposer();
-    let r;
-    try { r = await chatApi.send(sid, text, ready.map((f) => f.path), takeover ? { takeover: true } : {}); }
-    catch (e) { r = { ok: false, status: 0, data: { error: t("chat.send.offline") } }; }
-    chat.sending = false;
-    if (sid !== chat.sid) return;
-    if (r.ok && r.data?.ok !== false) {
-      const p = { text, files: ready.map((f) => f.name), t: sentAt };
-      if (!chat.echoes.some((m) => isEcho(m, p))) chat.pending.push(p);
-      ta.value = ""; chat.drafts.delete(sid); chat.files = chat.files.filter((f) => f.status === "error");
-      autosize(); renderAttachments(); renderPending(); toBottom();
-      pollSoon(); refresh();
-    } else {
-      chat.sendError = r.data?.error || (r.status === 409 ? t("chat.send.busy")
-        : r.status ? t("chat.send.failed", { status: r.status }) : t("chat.send.failed_network"));
-      syncComposer();
+    chat.sendError = ""; chat.confirmTakeover = false; chat.altTakeover = false;
+    const p = { text, files: ready.map((f) => f.name), uploads: ready, takeover, t: Date.now(), done: 0 };
+    chat.pending.push(p);
+    ta.value = ""; chat.drafts.delete(chat.sid); chat.files = chat.files.filter((f) => f.status === "error");
+    autosize(); renderAttachments(); renderPending(); toBottom();
+    const queue = outbox.get(chat.sid);
+    if (queue) queue.push(p);
+    else drain(chat.sid, [p]);
+  }
+  async function drain(sid, queue) {
+    outbox.set(sid, queue);
+    if (sid === chat.sid) syncComposer();
+    while (queue.length) {
+      const p = queue[0];
+      let r;
+      try { r = await chatApi.send(sid, p.text, p.uploads.map((f) => f.path), p.takeover ? { takeover: true } : {}); }
+      catch (e) { r = { ok: false, status: 0, data: { error: t("chat.send.offline") } }; }
+      if (!r.ok || r.data?.ok === false) { giveBack(sid, queue.splice(0), r); break; }
+      queue.shift();
+      p.done = Date.now();
+      if (sid === chat.sid) { renderPending(); pollSoon(); }
+      refresh();
     }
+    outbox.delete(sid);
+    if (sid === chat.sid) syncComposer();
+  }
+  // A message that did not go, and the ones queued behind it, go back to the input (before what was typed since),
+  // so none is lost and none arrives out of order.
+  function giveBack(sid, items, r) {
+    const list = pendingOf(sid);
+    for (const p of items) { const i = list.indexOf(p); if (i >= 0) list.splice(i, 1); }
+    const joined = (...parts) => parts.filter(Boolean).join("\n\n");
+    const text = joined(...items.map((p) => p.text));
+    const error = r.data?.error || (r.status === 409 ? t("chat.send.busy")
+      : r.status ? t("chat.send.failed", { status: r.status }) : t("chat.send.failed_network"));
+    if (sid !== chat.sid) { chat.drafts.set(sid, joined(text, chat.drafts.get(sid))); return; }
+    const ta = q(".composer textarea");
+    ta.value = joined(text, ta.value);
+    chat.files.unshift(...items.flatMap((p) => p.uploads));
+    chat.sendError = error;
+    autosize(); renderAttachments(); renderPending();
   }
 
   /* ---------- header actions ---------- */

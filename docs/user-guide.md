@@ -90,6 +90,11 @@ Text and files typed in a session's chat go by a route the dashboard picks per s
 | `queue` | Codex session: stopped, or held by the Codex daemon with its turn finished | `codex queue --thread <id> --message <text> --resume`: the daemon continues the session with a turn carrying this text. The command exits with code 0 even on failure, so sending waits (up to 20 s) for this turn to appear in the rollout; if it does not, the input field shows an error and the text stays. Text only. It does not write to a session open in VS Code, in `codex --no-daemon` or still running `codex exec`, a session busy with a turn, or a session whose last turn was interrupted (Codex will not start a new one from the queue: continue it via `codex resume <id>`); the reason is visible |
 | none | the session is waiting for a permission answer, a background session without a name, an unnamed agent working in a terminal | sending is disabled and the reason is shown; for a background session, with the `claude attach <id>` command |
 
+- A sent message shows in the feed at once, marked "Sending…", and the input field is free for the next one. A
+  session's messages go one at a time, in order. If one is not delivered, it and the ones queued behind it come back
+  to the input field, before anything typed since, with the reason.
+- The courier (`peer`) takes 3 to 10 seconds per message: it is a short `claude -p` turn of its own. A session in a
+  VS Code terminal gets the text by paste, in a fraction of a second, once the bridge is installed.
 - A session waiting for an answer to a permission or a dialog does not receive text: it would land in the dialog and
   could confirm something. For such a session, only jumping to the terminal is available.
 - Files are attached as `@/absolute/path` and are taken only from `~/.cache/see-your-agents/uploads`.

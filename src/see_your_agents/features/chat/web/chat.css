@@ -88,6 +88,7 @@
 .k-you .bub { background: color-mix(in srgb, var(--link) 9%, var(--sheet)); border-bottom-right-radius: 4px; }
 .k-agent .bub { background: var(--sheet); border-bottom-left-radius: 4px; box-shadow: 0 1px 0 color-mix(in srgb, var(--ink) 7%, transparent); }
 .pending .bub { opacity: .75; }
+.pending.on-way .bub { opacity: .55; }
 .bub time { display: block; text-align: right; font-size: 10.5px; color: var(--ink-3); margin-top: 1px; }
 .plain { white-space: pre-wrap; }
 .pics { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }

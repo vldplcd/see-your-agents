@@ -160,10 +160,25 @@ def test_peer_send_hands_the_text_to_the_courier_as_the_dashboard(courier_calls)
     status, reply = post(FakeApp(named()), {"text": "  что с CI?  "})
 
     assert (status, reply) == (200, {"ok": True, "route": "peer"})
-    assert calls == [
-        (NAME, REPLY_NOTE + "что с CI?", "что с CI?", "Dashboard", True)
-    ]  # the session counts as busy meanwhile
+    assert calls == [(NAME, REPLY_NOTE + "что с CI?", "что с CI?", "Dashboard", False)]
     assert not claude_routes.busy(SID)
+
+
+def test_a_courier_on_its_way_leaves_the_input_open_and_refuses_a_second_one(courier_calls, monkeypatch):
+    """The card is not "busy" meanwhile, so the page keeps its input; a second message at once is refused."""
+    app, seen = FakeApp(named()), []
+
+    def fake(to, text, summary, sender):
+        card = delivery.card_fields(app.index.record(SID), named())
+        seen.append((card["running_reply"], card["delivery"]["can_send"], post(app, {"text": "again"})))
+        return courier.Delivery(True, msg_id="m1")
+
+    monkeypatch.setattr(courier, "deliver", fake)
+
+    assert post(app, {"text": "hi"})[0] == 200
+    [(running_reply, can_send, (status, reply))] = seen
+    assert (running_reply, can_send) == (False, True)
+    assert status == 409 and "on its way" in reply["error"]
 
 
 def test_peer_failure_reaches_the_page_and_frees_the_session(courier_calls):
