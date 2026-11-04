@@ -115,3 +115,6 @@ vulnerabilities privately as [SECURITY.md](https://github.com/vldplcd/see-your-a
 MIT, see [LICENSE](https://github.com/vldplcd/see-your-agents/blob/main/LICENSE). The bundled fonts (Onest, Unbounded,
 Jost, Sofia Sans Condensed and Sofia Sans Extra Condensed) are under the SIL Open Font License 1.1; the license texts
 are next to them in [src/see_your_agents/web/fonts/](https://github.com/vldplcd/see-your-agents/tree/main/src/see_your_agents/web/fonts).
+
+see-your-agents is an independent project, not affiliated with or endorsed by Anthropic or OpenAI. Claude Code is a
+product of Anthropic, Codex a product of OpenAI.
