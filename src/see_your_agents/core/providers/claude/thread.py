@@ -138,6 +138,8 @@ class ClaudeThread(Thread):
                 self.on_assistant(e)
             case "system":
                 self.on_system(e)
+            case "attachment":
+                self.on_queued(e)
 
     def add(self, kind: str, e: dict, **fields: object) -> dict:
         msg = {"id": len(self.messages), "at": e.get("timestamp") or "", "kind": kind, **fields}
@@ -178,6 +180,20 @@ class ClaudeThread(Thread):
             for n, b in enumerate(images)
         ]
         self.add("you", e, text=_clip(text or "", TEXT_LIMIT), images=refs)
+
+    def on_queued(self, e: dict) -> None:
+        """A message that came while the agent worked: Claude Code records it as a queued command, not as a
+        user entry (seen with 2.1.318, typed in a terminal and by courier alike)."""
+        queued = e.get("attachment") or {}
+        if queued.get("type") != "queued_command" or not isinstance(queued.get("prompt"), str):
+            return
+        origin = queued.get("origin") or {}
+        if origin.get("kind") == "human" and queued.get("commandMode") == "prompt":
+            self.add("you", e, text=_clip(queued["prompt"], TEXT_LIMIT), images=[])
+        elif origin.get("kind") == "peer" and not origin.get("senderTaskId"):
+            sender = peer_sender({"origin": origin})
+            text = _clip(peer_text(origin), TEXT_LIMIT)
+            self.add("peer_in", e, **{"from": sender}, text=text, msg_id=origin.get("msg_id") or "")
 
     def on_assistant(self, e: dict) -> None:
         for block in (e.get("message") or {}).get("content") or []:

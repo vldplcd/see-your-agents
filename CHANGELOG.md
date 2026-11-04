@@ -15,6 +15,8 @@ All notable changes to this project are documented here. The format follows
 
 - The Chats button no longer counts new replies in archived sessions: the list folds the archive away, so the
   number stayed after every visible chat was read.
+- A message that reaches a session while its agent is working (typed in its terminal, or sent from the chat)
+  shows in the chat: Claude Code records it as a queued command, and the chat dropped it a minute after sending.
 
 ## [0.1.2] - 2026-11-04
 

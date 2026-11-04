@@ -276,6 +276,32 @@ def test_peer_message_is_a_peer_in_message_and_a_hand_back_is_not(env):
     assert (msg["from"], msg["text"], msg["msg_id"]) == ("alice", "hi", "m-1")
 
 
+def queued(prompt, origin, **extra):
+    """A message that came while the agent worked, as Claude Code 2.1.318 writes it."""
+    body = {"type": "queued_command", "prompt": prompt, "commandMode": "prompt", "origin": origin, **extra}
+    return {"type": "attachment", "timestamp": TS, "attachment": body}
+
+
+def test_a_message_that_came_mid_turn_is_shown_by_who_sent_it(env):
+    peer = {"kind": "peer", "name": "Dashboard", "msg_id": "m-1", "body": "by courier"}
+    env.append(
+        human("start"),
+        queued("typed while it worked", {"kind": "human"}, humanTurn=True),
+        queued("<cross-session-message>by courier</cross-session-message>", peer),
+        queued("<task-notification>done</task-notification>", {"kind": "task-notification"}),
+        queued("[Subagent hand-back]", {**peer, "senderTaskId": "abc"}),
+    )
+
+    page = env.page()
+
+    assert [(m["kind"], m["text"]) for m in page["messages"]] == [
+        ("you", "start"),
+        ("you", "typed while it worked"),
+        ("peer_in", "by courier"),
+    ]
+    assert (page["messages"][2]["from"], page["messages"][2]["msg_id"]) == ("Dashboard", "m-1")
+
+
 def test_a_named_send_that_reached_a_subagent_becomes_a_tool_line(env):
     env.append(
         assistant(tool_use("t1", "SendMessage", to="researcher", message="dig", summary="dig")),
