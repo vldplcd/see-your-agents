@@ -60,8 +60,8 @@ permission hook, the VS Code bridge) is in [docs/configuration.md](https://githu
 
 - [`uv`](https://docs.astral.sh/uv/) and Python 3.11 or newer.
 - The Claude Code CLI (`claude`) in `PATH`; the Codex CLI (`codex`) to see its sessions too.
-- macOS for everything that changes something from the page (browser pairing, the builder's sandboxes). Elsewhere
-  the page is read-only.
+- macOS or Linux. Windows is not supported natively; under WSL it should work as on Linux (not tested yet).
+- macOS only: the builder (its sandboxes use `sandbox-exec`) and keeping the Mac awake.
 - Optional: `glab` for MR states, VS Code or tmux for typing into a live session's terminal, `vplan` for visual
   plans.
 

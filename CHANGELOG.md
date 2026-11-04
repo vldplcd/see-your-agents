@@ -15,6 +15,12 @@ All notable changes to this project are documented here. The format follows
 - A live demo on GitHub Pages (https://vldplcd.github.io/see-your-agents/), rebuilt from `main`, and screenshots and a
   GIF in the README. In the demo you can answer a permission prompt from the board.
 
+### Changed
+
+- Browser pairing, and with it every action from the page, works on Linux too. The pairing tab opens through a page
+  only you can read, so the code never shows in a process's arguments, and `sya serve` prints the pairing link in its
+  terminal, for SSH sessions and machines without a desktop. Native Windows is still unsupported.
+
 ## [0.1.0] - 2026-11-04
 
 The first public release.

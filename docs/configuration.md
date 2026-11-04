@@ -12,14 +12,14 @@ permission hook and the VS Code bridge, and where the dashboard reads and writes
   the builder.
 - The Codex CLI (`codex`), if you want to see its sessions too: they come from `~/.codex`, live statuses via `lsof`;
   writing and launching go through `codex queue` and `codex exec`.
-- macOS for everything that changes something from the page:
-  - browser pairing opens the tab through `osascript`, and every action needs a paired tab
-    ([user-guide.md](user-guide.md#pairing-the-browser));
-  - the builder's sandboxes need `sandbox-exec`;
+- macOS or Linux. Every action from the page needs a paired tab
+  ([user-guide.md](user-guide.md#pairing-the-browser)): on macOS the pairing tab opens through `osascript`, on
+  Linux through `xdg-open` (or whatever Python's `webbrowser` finds) and a page only you can read; `sya serve` also
+  prints the link in its terminal. Windows is not supported natively; WSL should work as Linux does (not tested
+  yet).
+- macOS only:
+  - the builder's sandboxes need `sandbox-exec`; elsewhere its checks and preview refuse to run unconfined;
   - keeping the Mac awake needs `caffeinate`.
-
-  Elsewhere the dashboard refuses to pair, so the page is read-only; the builder's checks and preview refuse to run
-  unconfined.
 - Optional:
   - `glab` for MR states ([user-guide.md](user-guide.md#mr-state));
   - VS Code or tmux for typing into a live session's terminal
@@ -70,7 +70,7 @@ one: the first server holds the DuckDB file, and the second takes an in-memory i
 | `CLAUDE_CONFIG_DIR` | If Claude Code keeps its data somewhere other than `~/.claude` |
 | `CODEX_HOME` | If Codex CLI keeps its data somewhere other than `~/.codex` |
 | `SYA_CONFIG_DIR`, `SYA_CACHE_DIR` | Where the dashboard's own settings (`~/.config/see-your-agents`) and its cache: the index, uploads, logs, bridge sockets (`~/.cache/see-your-agents`) live |
-| `SYA_PAIR_OPENER` | For live checks: a command that gets the pairing URL on stdin instead of the browser being opened. It also enables pairing off macOS |
+| `SYA_PAIR_OPENER` | For live checks: a command that gets the pairing URL on stdin instead of the browser being opened |
 
 ## MCP and the supervisor
 

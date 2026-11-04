@@ -271,8 +271,11 @@ Mac awake while agents work" toggle, appearance. Reading the board stays open.
   yourself.
 - Pairing applies in the tab that confirmed it, until the dashboard restarts: the secret is kept only in the server's
   memory and in the tab's `sessionStorage`, nothing on disk. After a restart, "Pair this browser" again.
-- Pairing is macOS-only for now. Without pairing, the page shows requests but the buttons are disabled, and the
-  server answers 403 "This browser isn’t paired".
+- No tab opened (Linux without a desktop, an SSH session, or the tab went to another browser)? `sya serve` prints
+  the same link in its terminal: `Pair a browser: http://127.0.0.1:8765/#pair=…`, good once, within two minutes.
+  Over SSH, forward the port first: `ssh -L 8765:127.0.0.1:8765 <host>`.
+- Without pairing, the page shows requests but the buttons are disabled, and the server answers 403 "This browser
+  isn’t paired".
 
 Why this exists and what it does not cover: [security.md](security.md#browser-pairing).
 

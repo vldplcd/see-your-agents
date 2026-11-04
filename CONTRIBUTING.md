@@ -45,8 +45,8 @@ A second server next to a running one takes an in-memory index, which is fine. `
 static demo on made-up data (`demo/dist/see-your-agents.html`), handy for screenshots without real sessions; the same
 page is published on GitHub Pages from `main` (`.github/workflows/pages.yml`).
 
-Most actions on the page need a paired browser, and pairing works only on macOS. On Linux you can still run the
-server, read the board and run the whole test suite.
+Most actions on the page need a paired browser. Pairing works on macOS and Linux; when no tab opens (no desktop, an
+SSH session), open the link `sya serve` prints in its terminal. The builder's sandboxes are macOS-only.
 
 ## Where things are
 

@@ -82,9 +82,11 @@ open allowlist requires a secret that only the paired tab and only this server p
   does the same on every start. The server makes a code: 32 random bytes, 2 minutes, only one open at a time, spent
   only by an exact match, in memory only. It opens a new tab `http://127.0.0.1:<port>/#pair=<code>` (the address does
   not come from the request's Host), at most once a minute.
-- **The code stays out of argv.** The browser is opened by `osascript` reading `open location` from stdin: other
-  users can list process arguments. Off macOS, pairing refuses. The code never appears in HTTP replies, logs or
-  files.
+- **The code stays out of argv**, since other users can list process arguments. On macOS `osascript` reads
+  `open location` from stdin. Elsewhere the opener (`xdg-open`, or whatever Python's `webbrowser` finds) gets the
+  path of a page in a new `0700` folder that sends the browser on; the page is deleted when the code expires. Each
+  start also prints the link to the terminal of `sya serve`, only when stderr is a terminal: never into a log file.
+  The code never appears in HTTP replies or logs.
 - **The person confirms.** The tab removes the code from the address at once and asks "Pair this browser with the
   dashboard?". Only after "Pair" does it trade the code for a secret (`POST /api/pair`).
 - **Only in process memory.** Secret hashes (at most 8; an extra one evicts the least recently used) live in the
@@ -240,7 +242,7 @@ Documented gaps, by design or for now:
 
 - **Port squatting while the dashboard is off.** Someone who takes the port while the dashboard is off, and waits
   for the page to be opened once during that time, can gain a foothold in the browser (a service worker) and steal
-  the next pairing. That requires a process under your user or under another user of this Mac; a process under your
+  the next pairing. That requires a process under your user or under another user of this machine; a process under your
   user can simply write "allow all" into `~/.claude/settings.json` anyway. The real fix is to keep the port occupied
   at all times (launchd, later). What narrows the window: the secret lives only in process memory, the tab does not
   reload itself, assets carry the process version, the page removes foreign service workers.
@@ -261,7 +263,9 @@ Documented gaps, by design or for now:
     permissions, and your `WebFetch(domain:…)` rules apply to it;
   - `sandbox.excludedCommands` in your `~/.claude/settings.json` would, per the CLI code, take matching builder
     commands out of the sandbox.
-- **Platform.** Pairing, and with it every action, is macOS-only; elsewhere the page is read-only.
+- **Platform.** macOS and Linux. Native Windows is not supported: the process checks use `ps`, `lsof` and POSIX
+  signals. On Linux the pairing page sits in the temporary folder, which a browser from a snap cannot read (it has
+  its own `/tmp`); then the link in the terminal is the way in.
 
 ## Where it is tested
 
