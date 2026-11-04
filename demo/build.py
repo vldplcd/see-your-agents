@@ -1,11 +1,14 @@
-"""Build the static demo page (invented data, no server) for publishing as an artifact.
+"""Build the static demo page (invented data, no server): one self-contained HTML file.
 
-    uv run python demo/build.py   ->  demo/dist/see-your-agents.html
+    uv run python demo/build.py                        ->  demo/dist/see-your-agents.html
+    uv run python demo/build.py --out _site/index.html     (GitHub Pages, .github/workflows/pages.yml)
+    uv run python demo/build.py --artifact             ->  for an artifact host that adds its own skeleton
 
 The page is the one `sya serve` assembles from the feature registry, with every asset inlined and
 demo/demo-api.js in front of app.js in place of the server.
 """
 
+import argparse
 import json
 import re
 from pathlib import Path
@@ -17,7 +20,7 @@ from see_your_agents.i18n import LANGS, Catalogs, folders
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "demo" / "dist" / "see-your-agents.html"
 
-# The artifact host wraps the page in its own document skeleton (doctype, head, charset, viewport).
+# An artifact host wraps the page in its own document skeleton (doctype, head, charset, viewport).
 SKELETON = (
     "<!doctype html>",
     '<html lang="en">',
@@ -57,26 +60,34 @@ def catalogs_script() -> str:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description="Build the static demo page.")
+    parser.add_argument("--out", type=Path, default=OUT, help="where to write it")
+    parser.add_argument("--artifact", action="store_true", help="no skeleton: the artifact host adds it")
+    args = parser.parse_args()
+
     html = page(FEATURES)
     for tag in (APP_SCRIPT, I18N_SCRIPT):
         if tag not in html:
             raise SystemExit(f"index.html changed: {tag!r} not found")
     demo_api = (ROOT / "demo/demo-api.js").read_text()
+    if args.artifact:
+        demo_api = "window.SYA_DEMO_ARTIFACT = true;\n" + demo_api
     html = html.replace(I18N_SCRIPT, catalogs_script() + I18N_SCRIPT, 1)
     html = inline_assets(html.replace(APP_SCRIPT, f"<script>\n{demo_api}</script>\n{APP_SCRIPT}", 1))
-    for tag in SKELETON:
-        if tag not in html:
-            raise SystemExit(f"index.html changed: {tag!r} not found")
-        html = html.replace(tag, "", 1)
-    html = html.replace(
-        "<title>See your agents</title>",
-        '<title>See your agents</title>\n<meta name="claude:viewport-fit-sides" content="cover">',
-        1,
-    )
+    if args.artifact:
+        for tag in SKELETON:
+            if tag not in html:
+                raise SystemExit(f"index.html changed: {tag!r} not found")
+            html = html.replace(tag, "", 1)
+        html = html.replace(
+            "<title>See your agents</title>",
+            '<title>See your agents</title>\n<meta name="claude:viewport-fit-sides" content="cover">',
+            1,
+        )
     html = html.replace("</style>", DEMO_CSS, 1)
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(html.strip() + "\n")
-    print(OUT)
+    args.out.parent.mkdir(parents=True, exist_ok=True)
+    args.out.write_text(html.strip() + "\n")
+    print(args.out)
 
 
 if __name__ == "__main__":

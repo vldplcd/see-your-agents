@@ -189,18 +189,38 @@ Risks: webhooks that arrive during the switch are signed with the old secret, so
       recap: "The export broke on commas in product names; the escaping is fixed." },
   ];
 
+  // Permission prompts answered from the page (features/approvals): request id -> {sec, allow}. An answer moves
+  // the session on, as the hook's answer would.
+  const answered = new Map();
+  const bash = (id, summary, text) => ({ id, tool: "Bash", summary, text, complete: true, fields: [], warn: [] });
+
   // The demo moves on its own: a CI session asks for permission and the backfill progresses.
   function simulate() {
     const sec = (Date.now() - t0) / 1000;
+    const hooks = sessions.find((s) => s.n === 1), applied = answered.get("demo-apply");
+    hooks.approval = applied ? null
+      : bash("demo-apply", "Apply the webhook rotation on staging", "kubectl apply -f deploy/staging/webhook-secrets.yaml");
+    if (applied) {
+      hooks.live = { status: "busy", since: at(applied.sec) };
+      hooks.last = at(applied.sec);
+      hooks.recap = applied.allow
+        ? "Applying on staging: the manifests are in, waiting for the pods to roll out with both secrets."
+        : "You declined kubectl apply, so staging is untouched. Preparing a dry run to show what would change.";
+    }
+
     const ci = sessions.find((s) => s.n === 6);
     const cycle = sec - (sec % 70);  // every 70 s the CI agent asks for permission between seconds 12 and 40
-    const asking = sec % 70 > 12 && sec % 70 < 40;
+    const rerun = answered.get(`demo-rerun-${cycle}`);
+    const asking = sec % 70 > 12 && sec % 70 < 40 && !rerun;
+    ci.approval = asking ? bash(`demo-rerun-${cycle}`, "Rerun the CI pipeline", "gh workflow run ci.yml --ref ops-77-flaky") : null;
     ci.live = asking ? { status: "waiting", waiting_for: "permission prompt", since: at(cycle + 12) }
-      : { status: "busy", since: at(sec % 70 < 12 ? cycle - 30 : cycle + 40) };
+      : { status: "busy", since: at(rerun ? rerun.sec : sec % 70 < 12 ? cycle - 30 : cycle + 40) };
     ci.recap = asking
       ? "The third flaky test is fixed by retrying the request to the mock. I want to rerun the CI pipeline and need permission for gh workflow run."
-      : "Found three tests that depend on the run order. Two are fixed; working on the third.";
-    ci.last = asking ? at(cycle + 12) : at(sec - (sec % 20));
+      : rerun ? (rerun.allow ? "The CI pipeline is running again with the fix for the third flaky test."
+        : "You declined the rerun. Running the flaky test 50 times locally instead.")
+        : "Found three tests that depend on the run order. Two are fixed; working on the third.";
+    ci.last = asking ? at(cycle + 12) : rerun ? at(rerun.sec) : at(sec - (sec % 20));
 
     const backfill = sessions.find((s) => s.n === 5);
     const days = Math.min(7, 4 + Math.floor(sec / 30));
@@ -244,6 +264,7 @@ Risks: webhooks that arrive during the switch are signed with the old secret, so
       current_task: current ? current.active_form : "",
       delivery: delivery(s), done: !!s.done, running_reply: !!s.running_reply,
       peer: s.peer ? { dir: s.peer.dir, who: s.peer.who, text: s.peer.text, at: iso(s.peer.m) } : null,
+      approvals: s.approval ? [s.approval] : [],
     };
   }
 
@@ -544,10 +565,32 @@ ${lines.map((l, i) => `<text x="20" y="${62 + i * 24}" font-family="monospace" f
     },
   };
 
+  // Calls the page makes with fetch, not through SYA_API: whether this tab is paired (every demo tab is), the group
+  // chats (none here) and an answer to a permission prompt. Anything else goes on to the network.
+  const realFetch = window.fetch.bind(window);
+  const reply = (data) => new Response(JSON.stringify(data), { headers: { "Content-Type": "application/json" } });
+  window.fetch = async (input, init = {}) => {
+    const path = new URL(typeof input === "string" ? input : input.url, location.href).pathname;
+    if (path.endsWith("/api/pair")) return reply({ paired: true });
+    if (path.endsWith("/api/groups") && !init.method) return reply({ groups: [] });
+    const decide = path.match(/\/api\/approvals\/([^/]+)\/decide$/);
+    if (!decide || init.method !== "POST") return realFetch(input, init);
+    await wait(300);
+    answered.set(decodeURIComponent(decide[1]), {
+      sec: (Date.now() - t0) / 1000, allow: JSON.parse(init.body).behavior === "allow",
+    });
+    return reply({ ok: true });
+  };
+  // Pairing works on 127.0.0.1 only (SYA.pairing.local); the demo is served from anywhere. app.js has run by now.
+  document.addEventListener("DOMContentLoaded", () => {
+    SYA.pairing.local = true;
+    SYA.pairing.check();
+  });
+
   // Browser notifications are refused inside the published page; say what this page is instead.
-  // The host page owns light/dark here, so the theme switch is hidden too.
+  // On the artifact host the host page owns light/dark, so the theme switch is hidden too.
   document.getElementById("notify").classList.add("hidden");
-  document.getElementById("theme-row").classList.add("hidden");
+  if (window.SYA_DEMO_ARTIFACT) document.getElementById("theme-row").classList.add("hidden");
   const note = document.createElement("span");
   note.className = "demo-note";
   note.textContent = "Demo: the team and the sessions are made up, and statuses change on their own";
