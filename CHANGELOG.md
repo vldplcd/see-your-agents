@@ -6,6 +6,8 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-11-04
+
 ### Changed
 
 - A message from the chat to a background session (`claude --bg`, every session started with "+") is typed into
@@ -16,7 +18,6 @@ All notable changes to this project are documented here. The format follows
 - The same holds for a session in tmux or in a VS Code terminal: a text that starts with `/`, `!` or `#` goes to it
   by courier, not typed in as a command. In tmux, Enter is pressed only once `claude agents` says no permission
   prompt opened while the text was pasted: Enter would answer it.
-
 - A permission prompt for a call that names a session by its id (the supervisor's `stop_session`,
   `archive_session`, `send_to_session`) shows that session's title and project on the board, not only the id.
 
@@ -103,7 +104,8 @@ The first public release.
 - **Providers.** Claude Code and Codex sit behind one provider interface, so another agent CLI is a folder plus a
   registry line.
 
-[Unreleased]: https://github.com/vldplcd/see-your-agents/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/vldplcd/see-your-agents/compare/v0.1.3...HEAD
+[0.1.3]: https://github.com/vldplcd/see-your-agents/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/vldplcd/see-your-agents/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/vldplcd/see-your-agents/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/vldplcd/see-your-agents/releases/tag/v0.1.0
