@@ -1,7 +1,7 @@
 // Approvals: a permission prompt, a question or a plan the hook handed to the dashboard, answered from the
 // chat panel (SYA.chat.addPanel); the card and the drawer say what waits and lead there. The terminal's dialog
 // stays open meanwhile: the first answer wins. Data: card.approvals = [{id, tool, summary, text, plan, questions,
-// fields, warn, complete}] from /api/board; answers go to POST /api/approvals/<id>/decide. `warn` holds codes and
+// fields, warn, complete, session}] from /api/board; answers go to POST /api/approvals/<id>/decide. `warn` holds codes and
 // an empty `summary` means no title: both are worded here.
 // Allow is offered only when the whole input is on screen (`complete`): an allow approves all of it. Answering
 // needs a paired tab (SYA.pairing, app/pairing.py): otherwise the buttons are off and "Pair this browser" opens a
@@ -92,9 +92,11 @@
     }).join("");
   }
 
-  // Every other input field, name and value: what an allow also approves.
+  // Every other input field, name and value: what an allow also approves. Under a session id, the session it
+  // names (a.session: the dashboard's own title and project for that id).
+  const sessionHtml = (s) => `<p class="approvals-session"><b>${esc(s.title)}</b>${s.project ? ` <span>${esc(s.project)}</span>` : ""}</p>`;
   const fieldsHtml = (a) => (a.fields?.length ? `<dl class="approvals-fields">${a.fields.map(([k, v]) =>
-    `<dt>${esc(k)}</dt><dd><pre>${esc(v)}</pre></dd>`).join("")}</dl>` : "");
+    `<dt>${esc(k)}</dt><dd><pre>${esc(v)}</pre>${k === "session_id" && a.session ? sessionHtml(a.session) : ""}</dd>`).join("")}</dl>` : "");
 
   function terminalNote(c) {
     const note = c.live?.job_id

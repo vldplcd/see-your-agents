@@ -25,6 +25,8 @@ from see_your_agents.features.approvals import approvals, hook, install, store
 
 SID = "0b7716a8-0401-40a2-8386-1d38281f28c6"
 RECORD = {"session_id": SID, "title": "Чиним CI", "cwd": "/w/p", "last_activity": "2026-11-01T00:00:00Z"}
+OTHER = {"session_id": "01a1a18c-c2c3-79d1-b271-2ac8f8ad87e7", "title": "Release notes", "cwd": "/w/docs"}
+ARCHIVE = "mcp__sya_control__archive_session"
 WAITING = LiveSession(
     provider="claude", session_id=SID, kind="background", status="waiting", waiting_for="permission prompt"
 )
@@ -55,7 +57,7 @@ SECRETS: dict[str, str] = {}  # base URL -> the pairing secret of the browser pa
 
 @pytest.fixture
 def base(live):
-    app = FakeApp([RECORD], live, (feature.FEATURE,))
+    app = FakeApp([RECORD, OTHER], live, (feature.FEATURE,))
     httpd = ThreadingHTTPServer(("127.0.0.1", 0), server.make_handler(app, 0))
     port = httpd.server_address[1]
     httpd.RequestHandlerClass = server.make_handler(app, port)
@@ -257,6 +259,24 @@ def test_the_card_carries_what_waits_until_it_is_answered(base, token):
     Taker(base, token, rid)
     decide(base, rid, {"behavior": "allow"})
     assert "approvals" not in card(base)
+
+
+def test_a_call_that_names_a_session_by_id_says_which_session_it_is(base, token):
+    """The supervisor's archive_session carries only an id: the card names the session the dashboard knows by
+    it, and the id stays among the fields, since that is what an allow approves."""
+    target = OTHER["session_id"]
+    ask(base, token, {"session_id": SID, "tool_name": ARCHIVE, "tool_input": {"session_id": target}})
+    [shown] = card(base)["approvals"]
+    assert shown["session"] == {"title": "Release notes", "project": "docs"}
+    assert shown["summary"] == f"{ARCHIVE}: Release notes (docs)"
+    assert shown["fields"] == [["session_id", target]]
+
+
+def test_an_id_the_dashboard_does_not_know_stays_a_bare_id(base, token):
+    unknown = "ffffffff-0000-4000-8000-000000000000"
+    ask(base, token, {"session_id": SID, "tool_name": ARCHIVE, "tool_input": {"session_id": unknown}})
+    [shown] = card(base)["approvals"]
+    assert "session" not in shown and shown["summary"] == f"{ARCHIVE}: {unknown}"
 
 
 def test_every_input_field_is_drawn_and_unsandboxed_bash_is_flagged():

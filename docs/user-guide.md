@@ -248,6 +248,9 @@ what it wants and buttons:
 - **Deny**: like "No" in the terminal: the turn is interrupted, the agent waits for you;
 - **Deny with a comment**: the agent gets your text and continues with it.
 
+A call that names a session by its id (the supervisor's `stop_session`, `archive_session`, `send_to_session`)
+also shows that session's title and project, as its card has them.
+
 The board card shows what is waiting for an answer. The terminal dialog stays open meanwhile: the first answer wins,
 the second does nothing. If you answered in the terminal, the block in the dashboard disappears on its own. The main
 case is background sessions (`claude --bg`): before, their permissions could only be answered via `claude attach`.

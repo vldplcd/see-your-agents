@@ -207,14 +207,34 @@ def _summary(tool: str, inp: dict, cwd: str) -> str:
 BODY = {"Bash": "command", "Write": "content", PLAN: "plan"}  # the input field drawn as the call's body
 
 
-def view(tool: str, tool_input: dict, cwd: str = "") -> dict:
-    """What the card and the chat panel show: {summary, text, plan, questions, fields, warn, complete}.
+def session_named(app: App, sid: object) -> dict | None:
+    """{title, project} of the session an input's `session_id` names, as its card shows it: the supervisor's
+    stop_session or archive_session says only an id, and the user approves a session, not an id."""
+    if not isinstance(sid, str) or not SESSION_ID.fullmatch(sid):
+        return None
+    rec, live = app.index.record(sid), app.live().get(sid)
+    if rec is None and live is None:
+        return None
+    rec = rec or {}
+    folder = rec.get("project") or rec.get("cwd") or (live.cwd if live else "")
+    title = rec.get("title") or (live.name if live else "") or sid[:8]
+    return {"title": title, "project": Path(folder).name if folder else ""}
+
+
+def view(tool: str, tool_input: dict, cwd: str = "", session: dict | None = None) -> dict:
+    """What the card and the chat panel show: {summary, text, plan, questions, fields, warn, complete,
+    session}.
 
     Every input field is drawn: the body (`text`, `plan` or `questions`) and each other field as a name and
     a value. `complete` is False when anything is cut or not drawn; then the page offers no Allow, since an
-    allow approves the whole input, seen or not. `warn` holds codes (NO_SANDBOX) the page words."""
+    allow approves the whole input, seen or not. `warn` holds codes (NO_SANDBOX) the page words. `session` is
+    the session the input's `session_id` names (session_named), and the summary names it too."""
     inp = tool_input
     out: dict = {"summary": _summary(tool, inp, cwd), "fields": [], "warn": [], "complete": True}
+    if session:
+        out["session"] = session
+        label = session["title"] + (f" ({session['project']})" if session["project"] else "")
+        out["summary"] = f"{tool}: {_line(label)}"
     body = BODY.get(tool)
     if body and body in inp:
         text = _text(inp[body])
@@ -263,7 +283,8 @@ def _ask(app: App, data: dict) -> dict | str:
         return "tool_name"
     if not isinstance(tool_input, dict):
         tool_input = {}
-    req = STORE.add(sid, tool, view(tool, tool_input, data.get("cwd") or ""))
+    session = session_named(app, tool_input.get("session_id"))
+    req = STORE.add(sid, tool, view(tool, tool_input, data.get("cwd") or "", session))
     return {"id": req.id} if req else "too many requests are waiting for an answer"
 
 

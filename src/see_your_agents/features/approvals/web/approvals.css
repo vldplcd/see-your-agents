@@ -41,6 +41,8 @@
 .approvals-fields dt { color: var(--ink-3); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
 .approvals-fields dd { margin: 0; min-width: 0; }
 .approvals-fields pre { margin: 0; max-height: 140px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; font: 12px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--ink); }
+.approvals-session { margin: 2px 0 0; color: var(--ink); overflow-wrap: anywhere; }
+.approvals-session span { color: var(--ink-3); }
 .approvals-partial { margin: 0; font-size: 12.5px; color: var(--needs-ink); }
 .approvals-pair { font: inherit; font-size: 13.5px; padding: 6px 14px; cursor: pointer; border-radius: var(--radius-sm); border: var(--border-w) solid var(--edge); background: var(--sheet); color: var(--link); font-weight: 600; }
 a.approvals-pair { display: inline-block; text-decoration: none; }

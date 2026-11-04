@@ -6,6 +6,11 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Changed
+
+- A permission prompt for a call that names a session by its id (the supervisor's `stop_session`,
+  `archive_session`, `send_to_session`) shows that session's title and project on the board, not only the id.
+
 ## [0.1.2] - 2026-11-04
 
 ### Added
