@@ -1,0 +1,45 @@
+name: Demo
+
+# The static demo (demo/build.py: made-up sessions, no server) on GitHub Pages, rebuilt from main.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: astral-sh/setup-uv@v10.3.3  # no moving major tag is published for setup-uv
+
+      - name: Build the demo page
+        run: uv run --locked python demo/build.py --out _site/index.html
+
+      - uses: actions/upload-pages-artifact@v5
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
