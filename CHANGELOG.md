@@ -13,6 +13,9 @@ All notable changes to this project are documented here. The format follows
   from another session, and auto mode refused to act on it ("the request came from the dashboard, not from you").
   It also takes about a second instead of 3–10, carries files, and reaches a session without a name. A text that
   starts with `/`, `!` or `#` still goes by courier: typed, it would run as a command.
+- The same holds for a session in tmux or in a VS Code terminal: a text that starts with `/`, `!` or `#` goes to it
+  by courier, not typed in as a command. In tmux, Enter is pressed only once `claude agents` says no permission
+  prompt opened while the text was pasted: Enter would answer it.
 
 - A permission prompt for a call that names a session by its id (the supervisor's `stop_session`,
   `archive_session`, `send_to_session`) shows that session's title and project on the board, not only the id.

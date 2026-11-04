@@ -87,7 +87,7 @@ Text and files typed in a session's chat go by a route the dashboard picks per s
 | Route | When | How it gets there |
 |---|---|---|
 | `vscode` | live `claude` in a VS Code terminal | the bridge extension pastes the text into the terminal (bracketed paste) and presses Enter |
-| `tmux` | live `claude` in tmux | `tmux load-buffer` + `paste-buffer -p` + `send-keys Enter` |
+| `tmux` | live `claude` in tmux | `tmux load-buffer` + `paste-buffer -p` + `send-keys Enter`; Enter only once `claude agents` says no permission prompt opened while the text was pasted (Enter would answer it) |
 | `attach` | a background session (`claude --bg`, every session started with "+"), named or not, not waiting for a permission | the dashboard runs `claude attach <id>` on a pseudo-terminal of its own, types the text in and presses Enter, then detaches; the session keeps running. Claude Code records the text as typed by you, so auto mode treats it as your request, which it does not do for the courier's. Files go as `@path` mentions. Enter is pressed only once the text shows in the session's input and `claude agents` says no permission prompt is open (Enter would answer it); the message counts as sent once the session's transcript has it. A text that starts with `/`, `!` or `#` is not typed (Claude Code would run it as a command): a named session gets it by courier. About a second per message |
 | `resume` | no process, but there is a transcript and a folder | `claude -p --resume <id> -- <text>` as a single background turn; the reply is appended to the same transcript, the log goes to `~/.cache/see-your-agents/runs/` |
 | `peer` | live named `claude` outside VS Code and tmux, not waiting for a permission | the courier (`core/providers/claude/courier.py`, a short haiku turn) sends the text via `SendMessage` as a message from the `Dashboard` session (transcripts from before agent-facing text was English name it «Дашборд», and the chat still treats it as yours); text only, no files; the agent writes its reply in its own session and it shows up in the chat. Messages to the supervisor from any terminal go the same way |
@@ -104,6 +104,9 @@ Text and files typed in a session's chat go by a route the dashboard picks per s
 - A session waiting for an answer to a permission or a dialog does not receive text: it would land in the dialog and
   could confirm something. For such a session, only jumping to the terminal is available.
 - Files are attached as `@/absolute/path` and are taken only from `~/.cache/see-your-agents/uploads`.
+- A text that starts with `/`, `!` or `#` is never typed into a session (`vscode`, `tmux`, `attach`): Claude Code
+  would run it as a command, `/clear` would clear the session. A named session gets it by courier; an unnamed one
+  refuses it.
 - The `vscode` route needs the bridge extension, installed once with `uv run sya bridge install`
   ([configuration.md](configuration.md#vs-code-bridge)).
 

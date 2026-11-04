@@ -231,6 +231,7 @@
   "app.provider.claude.confirm_takeover": "Hace falta confirmar: la sesión se cerrará en su terminal",
   "app.provider.claude.no_tmux": "No se encontró tmux",
   "app.provider.claude.tmux_failed": "tmux no aceptó el texto: {error}",
+  "app.provider.claude.prompt_opened": "Se abrió una solicitud de permiso antes de Enter: el texto espera en el campo de entrada de la sesión; responde en su terminal",
   "app.provider.claude.no_bridge": "El puente de VS Code no está conectado",
   "app.provider.claude.no_process": "La sesión no tiene proceso",
   "app.provider.claude.no_exit": "El proceso no terminó en {s} s",

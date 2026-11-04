@@ -231,6 +231,7 @@
   "app.provider.claude.confirm_takeover": "Bestätigung nötig: Die Sitzung wird in ihrem Terminal geschlossen",
   "app.provider.claude.no_tmux": "tmux wurde nicht gefunden",
   "app.provider.claude.tmux_failed": "tmux hat den Text nicht angenommen: {error}",
+  "app.provider.claude.prompt_opened": "Vor Enter hat sich eine Berechtigungsabfrage geöffnet: Der Text wartet im Eingabefeld der Sitzung; antworte in ihrem Terminal",
   "app.provider.claude.no_bridge": "Die Brücke zu VS Code ist nicht angeschlossen",
   "app.provider.claude.no_process": "Die Sitzung hat keinen Prozess",
   "app.provider.claude.no_exit": "Der Prozess wurde nicht innerhalb von {s} s beendet",

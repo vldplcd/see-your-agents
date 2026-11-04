@@ -236,6 +236,7 @@
   "app.provider.claude.confirm_takeover": "нужно подтверждение: сессия закроется в терминале",
   "app.provider.claude.no_tmux": "tmux не найден",
   "app.provider.claude.tmux_failed": "tmux не принял текст: {error}",
+  "app.provider.claude.prompt_opened": "до Enter открылся запрос разрешения: текст ждёт в поле ввода сессии — ответь в её терминале",
   "app.provider.claude.no_bridge": "мост VS Code не подключён",
   "app.provider.claude.no_process": "у сессии нет процесса",
   "app.provider.claude.no_exit": "процесс не завершился за {s} с",

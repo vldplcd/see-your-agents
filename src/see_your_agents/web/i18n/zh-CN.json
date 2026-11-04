@@ -231,6 +231,7 @@
   "app.provider.claude.confirm_takeover": "需要确认：会话将在其终端中关闭",
   "app.provider.claude.no_tmux": "找不到 tmux",
   "app.provider.claude.tmux_failed": "tmux 未接收文本：{error}",
+  "app.provider.claude.prompt_opened": "按下 Enter 前弹出了权限请求：文本留在会话的输入框中；请在它的终端中回答",
   "app.provider.claude.no_bridge": "VS Code 桥接未接入",
   "app.provider.claude.no_process": "会话没有进程",
   "app.provider.claude.no_exit": "进程未在 {s} 秒内退出",

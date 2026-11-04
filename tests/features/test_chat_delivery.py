@@ -407,6 +407,7 @@ def test_tmux_route_pastes_in_bracketed_mode_then_presses_enter(tmp_path, monkey
     monkeypatch.setenv("PATH", f"{bin_dir}:{os.environ['PATH']}")
     monkeypatch.setattr(claude_routes, "snapshot", lambda: snap(registry={500: {"tmux": "%3"}}))
     monkeypatch.setattr(claude_routes, "verify_live", lambda lv: None)
+    monkeypatch.setattr(claude_routes, "on_prompt", lambda sid: False)  # `claude agents`: no prompt open
 
     status, reply = post(FakeApp(tmp_path, {SID: live()}), "send", {"text": "hello"})
 

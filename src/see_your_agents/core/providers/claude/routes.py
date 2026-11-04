@@ -14,7 +14,8 @@ Routes of a message the user writes in the chat (decided per session, see `route
 A signed message (`Message.sender`: a group, the morning review) is never typed into a terminal: a live
 session gets it by courier under the sender's name, a stopped one by a resume turn. Nor is a text Claude Code
 would run as a command ("/", "!", "#" first): a named session gets it by courier.
-Text is never sent to a session that waits on a permission prompt or dialog: it would land in the dialog.
+Text is never sent to a session that waits on a permission prompt or dialog: it would land in the dialog, and
+Enter would answer it, so a route that presses Enter itself asks `claude agents` again right before it.
 A background session has no terminal of its own: the prompt is answered after `claude attach <job id>`.
 
 What only the dashboard knows comes through `plug`, once, from the feature that wires Claude in (the chat's
@@ -56,7 +57,7 @@ from ..base import (
     Status,
 )
 from . import ID, attach, courier
-from .live import registry_by_pid
+from .live import on_prompt, registry_by_pid
 from .paths import claude_home
 from .transcript import REPLY_NOTE
 
@@ -76,6 +77,7 @@ NO_CLAUDE = "app.provider.claude.no_claude"
 WAITING_PROMPT = "app.provider.claude.waiting"
 NAMESAKES = "app.provider.claude.namesakes"
 COMMAND_TEXT = "app.provider.claude.command_text"
+TYPED = {"attach", "tmux", "vscode"}  # routes that type the text into the session's input
 
 
 class Terminals(Protocol):
@@ -267,10 +269,6 @@ def _background_route(live: LiveSession) -> Route:
         return Route(None, False, "app.provider.claude.bg_waiting", params={"attach": _attach_command(live)})
     if live.job_id and shutil.which("claude"):
         return Route("attach", True, "app.provider.claude.bg_attach", live.job_id)
-    return _background_peer(live)
-
-
-def _background_peer(live: LiveSession) -> Route:
     if not live.address:
         return Route(None, False, "app.provider.claude.bg_unnamed", params={"attach": _attach_command(live)})
     return Route("peer", True, "app.provider.claude.bg_peer", live.address)
@@ -356,7 +354,8 @@ def compose(message: Message) -> str:
     return message.text + "".join(f"\n@{p}" for p in message.files)
 
 
-def _tmux_paste(target: str, text: str) -> None:
+def _tmux_paste(target: str, text: str, session_id: str) -> None:
+    """Paste, then Enter, unless a permission prompt opened meanwhile: Enter would answer it."""
     tmux = shutil.which("tmux")
     if not tmux:
         raise SendError("app.provider.claude.no_tmux")
@@ -365,6 +364,8 @@ def _tmux_paste(target: str, text: str) -> None:
         subprocess.run([tmux, "load-buffer", "-b", buf, "-"], input=text, text=True, check=True, timeout=5)
         subprocess.run([tmux, "paste-buffer", "-p", "-d", "-b", buf, "-t", target], check=True, timeout=5)
         time.sleep(0.15)
+        if on_prompt(session_id) is not False:  # on a prompt, or gone
+            raise SendRefused("app.provider.claude.prompt_opened")
         subprocess.run([tmux, "send-keys", "-t", target, "Enter"], check=True, timeout=5)
     except (OSError, subprocess.SubprocessError) as exc:
         raise SendError("app.provider.claude.tmux_failed", error=str(exc)) from exc
@@ -467,10 +468,10 @@ def send(session: Session, message: Message) -> Sent:
     assert live is not None  # every other route is to a live session
     if message.sender:
         return _signed_by_courier(str(found.target), message)
-    if found.route == "attach" and not attach.typeable(message.text):
-        found = _background_peer(live)
-        if not found.can_send:
+    if found.route in TYPED and not attach.typeable(message.text):
+        if not live.address:
             raise SendRefused(COMMAND_TEXT)
+        found = Route("peer", True, "", live.address)
     if found.route == "attach":
         return _by_attach(live, message)
     if found.route == "peer" and not message.takeover:
@@ -496,7 +497,7 @@ def send(session: Session, message: Message) -> Sent:
             raise SendError("app.provider.claude.no_bridge")
         _host.terminals.send(int(found.target), compose(message))
     else:
-        _tmux_paste(str(found.target), compose(message))
+        _tmux_paste(str(found.target), compose(message), session.session_id)
     return Sent(found.route)
 
 

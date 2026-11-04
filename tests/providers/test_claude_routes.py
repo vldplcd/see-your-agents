@@ -180,3 +180,41 @@ def test_a_resume_asks_for_its_flags_outside_the_lock_and_refuses_unplugged(tmp_
         claude_routes.resume(session, Message("hi"))
 
     assert asked == [False]
+
+
+@pytest.fixture
+def tmux_calls(monkeypatch):
+    """tmux on PATH, its subcommands recorded instead of run; the session is in pane %3."""
+    calls = []
+    monkeypatch.setattr(claude_routes.shutil, "which", lambda n: f"/usr/bin/{n}")
+    monkeypatch.setattr(claude_routes.subprocess, "run", lambda argv, **kw: calls.append(argv[1]))
+    monkeypatch.setattr(claude_routes.time, "sleep", lambda s: None)
+    monkeypatch.setattr(claude_routes, "snapshot", lambda: snap(registry={500: {"tmux": "%3"}}))
+    return calls
+
+
+def test_tmux_presses_enter_only_while_no_prompt_is_open(couriered, tmux_calls, monkeypatch):
+    in_tmux = live(name="proj")
+    plug(in_tmux)
+    session = Session(SID, "/", live=in_tmux)
+
+    monkeypatch.setattr(claude_routes, "on_prompt", lambda sid: False)
+    assert claude_routes.send(session, Message("hi")).route == "tmux"
+    assert tmux_calls == ["load-buffer", "paste-buffer", "send-keys"]
+
+    tmux_calls.clear()
+    monkeypatch.setattr(claude_routes, "on_prompt", lambda sid: True)  # opened while the text was pasted
+    with pytest.raises(SendRefused, match="opened before Enter"):
+        claude_routes.send(session, Message("hi"))
+    assert tmux_calls == ["load-buffer", "paste-buffer"]
+
+
+def test_a_command_like_text_is_not_typed_into_a_terminal(couriered, tmux_calls):
+    named = live(name="proj")
+    plug(named)
+
+    sent = claude_routes.send(Session(SID, "/", live=named), Message("/clear"))
+
+    assert sent.route == "peer" and couriered[0]["to"] == "proj" and tmux_calls == []
+    with pytest.raises(SendRefused, match="as a command"):
+        claude_routes.send(Session(SID, "/", live=live()), Message("# note"))

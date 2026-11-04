@@ -231,6 +231,7 @@
   "app.provider.claude.confirm_takeover": "Confirmation requise : la session se fermera dans son terminal",
   "app.provider.claude.no_tmux": "tmux est introuvable",
   "app.provider.claude.tmux_failed": "tmux n’a pas pris le texte : {error}",
+  "app.provider.claude.prompt_opened": "Une demande d’autorisation s’est ouverte avant Entrée : le texte attend dans le champ de saisie de la session ; répondez dans son terminal",
   "app.provider.claude.no_bridge": "Le pont VS Code n’est pas branché",
   "app.provider.claude.no_process": "La session n’a pas de processus",
   "app.provider.claude.no_exit": "Le processus ne s’est pas terminé en {s} s",
