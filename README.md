@@ -65,7 +65,8 @@ permission hook, the VS Code bridge) is in [docs/configuration.md](https://githu
 - Optional: `glab` for MR states, VS Code or tmux for typing into a live session's terminal, `vplan` for visual
   plans.
 
-The dashboard writes nothing to `~/.claude` or `~/.codex` itself, except through the setup commands you run. Details:
+The dashboard writes nothing to `~/.claude` or `~/.codex` itself, except through the setup commands you run, and the
+page loads nothing from the internet: even its fonts ship with the package. Details:
 [docs/configuration.md](https://github.com/vldplcd/see-your-agents/blob/main/docs/configuration.md).
 
 ## Documentation
@@ -111,4 +112,6 @@ vulnerabilities privately as [SECURITY.md](https://github.com/vldplcd/see-your-a
 
 ## License
 
-MIT, see [LICENSE](https://github.com/vldplcd/see-your-agents/blob/main/LICENSE).
+MIT, see [LICENSE](https://github.com/vldplcd/see-your-agents/blob/main/LICENSE). The bundled fonts (Onest, Unbounded,
+Jost, Sofia Sans Condensed and Sofia Sans Extra Condensed) are under the SIL Open Font License 1.1; the license texts
+are next to them in [src/see_your_agents/web/fonts/](https://github.com/vldplcd/see-your-agents/tree/main/src/see_your_agents/web/fonts).

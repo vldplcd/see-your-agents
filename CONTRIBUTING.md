@@ -130,6 +130,10 @@ The README's pictures come from the demo page (`demo/demo-api.js` supplies its d
 `scripts/shoot.mjs` pointed at the built demo, `approve-*.gif` from `node scripts/record-demo.mjs` (needs gifski).
 Retake them when a change makes them look out of date.
 
+The page's fonts ship with the package, in `src/see_your_agents/web/fonts/` with their SIL Open Font License texts,
+so the page loads nothing from the internet. `uv run python scripts/fonts.py` fetches them again from Google Fonts;
+change its list to add a family, a weight or a subset.
+
 **Docs.** A change users can see updates [docs/user-guide.md](docs/user-guide.md); a new command, variable or file
 updates [docs/configuration.md](docs/configuration.md); a change to what the dashboard guards updates
 [docs/security.md](docs/security.md).

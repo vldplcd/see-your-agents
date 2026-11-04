@@ -35,8 +35,13 @@ from .pairing import Pairing
 WEB = Path(__file__).resolve().parent.parent / "web"
 ASSET = re.compile(r"/([a-z0-9-]+\.(js|css))")
 FEATURE_ASSET = re.compile(r"/([a-z][a-z0-9-]*)/([a-z0-9-]+\.(js|css))")
+FONT = re.compile(r"/fonts/([a-z0-9-]+\.(woff2))")
 CATALOG = re.compile(r"/i18n/([a-z]{2,3}(?:-[A-Z]{2})?)\.js")
-ASSET_TYPES = {"js": "text/javascript; charset=utf-8", "css": "text/css; charset=utf-8"}
+ASSET_TYPES = {
+    "js": "text/javascript; charset=utf-8",
+    "css": "text/css; charset=utf-8",
+    "woff2": "font/woff2",
+}
 MAX_POST_BYTES = 32 * 1024 * 1024
 MCP_PATH = "/mcp"
 
@@ -75,16 +80,19 @@ def page(features: Sequence[Feature], tag: str = "") -> str:
     styles = "".join(f'<link rel="stylesheet" href="{f.id}/{n}{v}">\n' for f in features for n in f.styles)
     scripts = "".join(f'<script src="{f.id}/{n}{v}"></script>\n' for f in features for n in f.scripts)
     html = (WEB / "index.html").read_text(encoding="utf-8")
-    for own in ('href="base.css"', 'src="i18n.js"', 'src="figures.js"', 'src="app.js"'):
+    for own in ('href="fonts.css"', 'href="base.css"', 'src="i18n.js"', 'src="figures.js"', 'src="app.js"'):
         html = html.replace(own, f'{own[:-1]}{v}"')
     return html.replace("<!--sya:styles-->\n", styles).replace("<!--sya:scripts-->\n", scripts)
 
 
 def asset(features: Sequence[Feature], path: str) -> tuple[str, bytes] | None:
-    """(content type, bytes) of a page asset: the shell's own file or one a feature lists in its manifest."""
+    """(content type, bytes) of a page asset: the shell's own file, a bundled font, or a file a feature lists
+    in its manifest."""
     by_id = {f.id: f for f in features}
     if shell := ASSET.fullmatch(path):
         file, kind = WEB / shell[1], shell[2]
+    elif font := FONT.fullmatch(path):
+        file, kind = WEB / "fonts" / font[1], font[2]
     elif (own := FEATURE_ASSET.fullmatch(path)) and own[1] in by_id:
         file, kind = by_id[own[1]].asset(own[2]), own[3]
     else:

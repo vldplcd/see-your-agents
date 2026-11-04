@@ -9,6 +9,7 @@ demo/demo-api.js in front of app.js in place of the server.
 """
 
 import argparse
+import base64
 import json
 import re
 from pathlib import Path
@@ -37,19 +38,24 @@ I18N_SCRIPT = '<script src="i18n.js"></script>'
 DEMO_CSS = ".demo-note { flex-basis: 100%; font-size: 12.5px; color: var(--ink-3); }\n</style>"
 LOCAL_CSS = re.compile(r'<link rel="stylesheet" href="([a-z0-9/-]+\.css)">')
 LOCAL_JS = re.compile(r'<script src="([a-z0-9/-]+\.js)"></script>')
+FONT_URL = re.compile(r"url\((fonts/[a-z0-9-]+\.woff2)\)")
 
 
 def inline_assets(html: str) -> str:
-    """The artifact is a single file: the page's own stylesheets and scripts go inline."""
+    """The artifact is a single file: the page's own stylesheets, scripts and fonts go inline."""
 
-    def text(url: str) -> str:
+    def data(url: str) -> bytes:
         found = asset(FEATURES, "/" + url)
         if found is None:
             raise SystemExit(f"page asset not found: {url}")
-        return found[1].decode()
+        return found[1]
 
-    html = LOCAL_CSS.sub(lambda m: f"<style>\n{text(m[1])}</style>", html)
-    return LOCAL_JS.sub(lambda m: f"<script>\n{text(m[1])}</script>", html)
+    def font(url: str) -> str:
+        return f"url(data:font/woff2;base64,{base64.b64encode(data(url)).decode()})"
+
+    html = LOCAL_CSS.sub(lambda m: f"<style>\n{data(m[1]).decode()}</style>", html)
+    html = FONT_URL.sub(lambda m: font(m[1]), html)
+    return LOCAL_JS.sub(lambda m: f"<script>\n{data(m[1]).decode()}</script>", html)
 
 
 def catalogs_script() -> str:

@@ -50,7 +50,10 @@ Not defended against:
 - Every HTML reply has `X-Frame-Options: DENY` and `Content-Security-Policy: frame-ancestors 'none'`. A plan
   (`/api/plan`) is embedded only by the page itself (`SAMEORIGIN`, `sandbox allow-scripts`).
 - Page assets are served only by name from a feature's manifest, only `[a-z0-9-]+.(js|css)`, only from that
-  feature's `web/` folder. The strings script is built from JSON catalogs, never code from a file.
+  feature's `web/` folder; fonts only as `/fonts/[a-z0-9-]+.woff2` from `web/fonts/`. The strings script is built
+  from JSON catalogs, never code from a file.
+- The page loads nothing from other hosts: no CDN, and the fonts ship with the package, so opening the dashboard
+  tells no one else about it. `tests/app/test_feature.py` checks the page and every stylesheet for remote URLs.
 - Images from transcripts: raster types only; an SVG served from the dashboard's address would run a script with
   API access.
 

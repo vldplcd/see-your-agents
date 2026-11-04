@@ -42,6 +42,7 @@ src/see_your_agents/
                     a feature's strings: features/<id>/i18n/<lang>.json
   web/            page shell
     index.html      header markup, the Appearance panel, the session panel and slots for features
+    fonts.css       @font-face rules for fonts/: the page's fonts (SIL OFL 1.1), from scripts/fonts.py
     base.css        tokens, styles, themes; shared card parts and agent figures; docks
     i18n.js         in <head>, before any other script: picks the language, loads /i18n/<lang>.js; t(), translate()
     i18n/           the shell's and the host's strings: en.json, ru.json, es.json, de.json, fr.json, zh-CN.json
@@ -149,7 +150,7 @@ No build step and no framework: plain `<script>` tags in the global scope. Load 
 
 ```
 i18n.js → /i18n/<lang>.js (in <head>: the language and its strings)
-base.css → feature css (in registry order)
+fonts.css → base.css → feature css (in registry order)
 figures.js → app.js → feature js (in registry order)
 ```
 

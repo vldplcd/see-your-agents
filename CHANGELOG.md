@@ -6,6 +6,12 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Changed
+
+- The page loads nothing from the internet: its fonts (Onest, Unbounded, Jost, Sofia Sans Condensed and Extra
+  Condensed) ship with the package instead of coming from Google Fonts, and the demo page carries them inline. They
+  are under the SIL Open Font License 1.1, so the package's license is now `MIT AND OFL-1.1`.
+
 ## [0.1.1] - 2026-11-04
 
 ### Added

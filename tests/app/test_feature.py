@@ -62,7 +62,7 @@ def fetch(url, payload=None, headers=None):
 def test_the_page_carries_every_feature_asset_in_registry_order():
     html = server.page(ALL)
 
-    assert re.findall(r'<link rel="stylesheet" href="([^"]+)">', html) == ["base.css"] + [
+    assert re.findall(r'<link rel="stylesheet" href="([^"]+)">', html) == ["fonts.css", "base.css"] + [
         f"{f.id}/{n}" for f in ALL for n in f.styles
     ]
     assert re.findall(r'<script src="([^"]+)"></script>', html) == ["i18n.js", "figures.js", "app.js"] + [
@@ -84,6 +84,21 @@ def test_assets_are_served_only_when_the_manifest_lists_them(base):
     assert fetch(f"{base}/hello/hello.css")[1].startswith("text/css")
     assert fetch(f"{base}/app.js")[0] == 200
     for path in ("/hello/hello.py", "/hello/other.js", "/hello/../hello/hello.js", "/nope/x.js", "/hello.js"):
+        assert fetch(base + path)[0] == 404, path
+
+
+def test_the_page_loads_nothing_from_the_internet(base):
+    """The fonts are bundled: opening the dashboard tells no other host about it."""
+    assert not re.findall(r'(?:href|src)="(?:https?:)?//', server.page(ALL))
+    remote = re.compile(r"@import|url\(\s*['\"]?(?:https?:)?//")
+    for path in ["/fonts.css", "/base.css", *(f"/{f.id}/{n}" for f in ALL for n in f.styles)]:
+        assert not remote.search(server.asset(ALL, path)[1].decode()), path
+    fonts = set(re.findall(r"url\(([^)]+)\)", server.asset(ALL, "/fonts.css")[1].decode()))
+    assert fonts and all(u.startswith("fonts/") for u in fonts), fonts
+    for url in fonts:
+        status, ctype, body = fetch(f"{base}/{url}")
+        assert (status, ctype, body[:4]) == (200, "font/woff2", b"wOF2"), url
+    for path in ("/fonts/OFL-onest.txt", "/fonts/onest-latin.ttf", "/fonts/../app.js", "/fonts/sub/x.woff2"):
         assert fetch(base + path)[0] == 404, path
 
 
