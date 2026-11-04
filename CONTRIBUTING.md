@@ -42,7 +42,8 @@ SYA_CONFIG_DIR=$(mktemp -d) SYA_CACHE_DIR=$(mktemp -d) uv run sya serve --no-ope
 ```
 
 A second server next to a running one takes an in-memory index, which is fine. `uv run python demo/build.py` builds a
-static demo on made-up data (`demo/dist/see-your-agents.html`), handy for screenshots without real sessions.
+static demo on made-up data (`demo/dist/see-your-agents.html`), handy for screenshots without real sessions; the same
+page is published on GitHub Pages from `main` (`.github/workflows/pages.yml`).
 
 Most actions on the page need a paired browser, and pairing works only on macOS. On Linux you can still run the
 server, read the board and run the whole test suite.
@@ -124,6 +125,10 @@ the version, builds the package and uploads it to PyPI through Trusted Publishin
 ([adding-a-feature.md, "Look at it live"](docs/adding-a-feature.md#12-look-at-it-live)). Check the three styles
 ("Bureau", "Constructor", "Control room") and attach at least one light and one dark shot of what changed. The script
 exits 1 when the page logged a console error: that has to be fixed too.
+
+The README's pictures come from the demo page (`demo/demo-api.js` supplies its data): `board-*.png` from
+`scripts/shoot.mjs` pointed at the built demo, `approve-*.gif` from `node scripts/record-demo.mjs` (needs gifski).
+Retake them when a change makes them look out of date.
 
 **Docs.** A change users can see updates [docs/user-guide.md](docs/user-guide.md); a new command, variable or file
 updates [docs/configuration.md](docs/configuration.md); a change to what the dashboard guards updates

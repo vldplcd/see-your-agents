@@ -7,7 +7,12 @@ write to sessions, answer Claude Code's permission prompts, start new sessions a
 watches all the others. The dashboard runs on your machine: a Python server on `127.0.0.1` and a page in your
 browser.
 
-<!-- Screenshot: docs/images/board.png (the board in light and dark) -->
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/vldplcd/see-your-agents/main/docs/images/board-dark.png">
+  <img alt="The board: sessions in the columns Needs you, Working, Your move and Recently closed, with the conversation list on the left" src="https://raw.githubusercontent.com/vldplcd/see-your-agents/main/docs/images/board-light.png">
+</picture>
+
+**[Try the demo](https://vldplcd.github.io/see-your-agents/)** in your browser: made-up sessions, nothing to install.
 
 ## Features
 
@@ -23,6 +28,13 @@ browser.
 - **Builder**: ask the supervisor for a new module, and an agent builds it in a sandboxed branch for you to accept.
 - Six UI languages: English, Russian, Spanish, German, French, Simplified Chinese. All UI text was written by
   Claude Opus 5.5; if a translation or a name could be better, suggestions are welcome.
+
+A permission prompt answered from the board; the terminal's dialog stays open, and the first answer wins:
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/vldplcd/see-your-agents/main/docs/images/approve-dark.gif">
+  <img alt="Answer on a card opens the request with its command; Allow sends it, and the card moves to Working" src="https://raw.githubusercontent.com/vldplcd/see-your-agents/main/docs/images/approve-light.gif" width="720">
+</picture>
 
 ## Quick start
 
@@ -40,7 +52,7 @@ uv run sya serve
 ```
 
 The page is in English by default; Appearance → Language switches it. Optional one-time setup (the supervisor, the
-permission hook, the VS Code bridge) is in [docs/configuration.md](docs/configuration.md).
+permission hook, the VS Code bridge) is in [docs/configuration.md](https://github.com/vldplcd/see-your-agents/blob/main/docs/configuration.md).
 
 ## Requirements
 
@@ -52,16 +64,16 @@ permission hook, the VS Code bridge) is in [docs/configuration.md](docs/configur
   plans.
 
 The dashboard writes nothing to `~/.claude` or `~/.codex` itself, except through the setup commands you run. Details:
-[docs/configuration.md](docs/configuration.md).
+[docs/configuration.md](https://github.com/vldplcd/see-your-agents/blob/main/docs/configuration.md).
 
 ## Documentation
 
-- [User guide](docs/user-guide.md): everything on screen and how to use it.
-- [Configuration](docs/configuration.md): commands, ports, environment variables, data locations.
-- [Security](docs/security.md): the threat model, guarantees and residual risks.
-- [Architecture](docs/ARCHITECTURE.md), [providers](docs/providers.md), [languages](docs/i18n.md),
-  [adding a feature](docs/adding-a-feature.md).
-- The full index: [docs/README.md](docs/README.md). What changed between versions: [CHANGELOG.md](CHANGELOG.md).
+- [User guide](https://github.com/vldplcd/see-your-agents/blob/main/docs/user-guide.md): everything on screen and how to use it.
+- [Configuration](https://github.com/vldplcd/see-your-agents/blob/main/docs/configuration.md): commands, ports, environment variables, data locations.
+- [Security](https://github.com/vldplcd/see-your-agents/blob/main/docs/security.md): the threat model, guarantees and residual risks.
+- [Architecture](https://github.com/vldplcd/see-your-agents/blob/main/docs/ARCHITECTURE.md), [providers](https://github.com/vldplcd/see-your-agents/blob/main/docs/providers.md), [languages](https://github.com/vldplcd/see-your-agents/blob/main/docs/i18n.md),
+  [adding a feature](https://github.com/vldplcd/see-your-agents/blob/main/docs/adding-a-feature.md).
+- The full index: [docs/README.md](https://github.com/vldplcd/see-your-agents/blob/main/docs/README.md). What changed between versions: [CHANGELOG.md](https://github.com/vldplcd/see-your-agents/blob/main/CHANGELOG.md).
 
 ## Contributing
 
@@ -76,8 +88,8 @@ Contributions are welcome. Ways to help:
 
 How a feature is added: a folder in `src/see_your_agents/features/<id>/` and one line in
 `src/see_your_agents/features/__init__.py`; the host and other features are not edited. Walkthrough:
-[docs/adding-a-feature.md](docs/adding-a-feature.md). A provider is the same shape, a folder in
-`core/providers/<id>/` and one registry line: [docs/providers.md](docs/providers.md).
+[docs/adding-a-feature.md](https://github.com/vldplcd/see-your-agents/blob/main/docs/adding-a-feature.md). A provider is the same shape, a folder in
+`core/providers/<id>/` and one registry line: [docs/providers.md](https://github.com/vldplcd/see-your-agents/blob/main/docs/providers.md).
 
 The rules, in short:
 
@@ -89,12 +101,12 @@ The rules, in short:
 - UI changes come with screenshots in light and dark; security-sensitive changes come with tests.
 
 Pull requests written with Claude Code, Codex or another agent are welcome; the repo carries rules for them
-([CLAUDE.md](CLAUDE.md), [AGENTS.md](AGENTS.md)). The maintainers may decline any pull request without giving a
+([CLAUDE.md](https://github.com/vldplcd/see-your-agents/blob/main/CLAUDE.md), [AGENTS.md](https://github.com/vldplcd/see-your-agents/blob/main/AGENTS.md)). The maintainers may decline any pull request without giving a
 reason.
 
-Details: [CONTRIBUTING.md](CONTRIBUTING.md). Keep it civil ([code of conduct](CODE_OF_CONDUCT.md)), and report
-vulnerabilities privately as [SECURITY.md](SECURITY.md) describes.
+Details: [CONTRIBUTING.md](https://github.com/vldplcd/see-your-agents/blob/main/CONTRIBUTING.md). Keep it civil ([code of conduct](https://github.com/vldplcd/see-your-agents/blob/main/CODE_OF_CONDUCT.md)), and report
+vulnerabilities privately as [SECURITY.md](https://github.com/vldplcd/see-your-agents/blob/main/SECURITY.md) describes.
 
 ## License
 
-MIT, see [LICENSE](LICENSE).
+MIT, see [LICENSE](https://github.com/vldplcd/see-your-agents/blob/main/LICENSE).
