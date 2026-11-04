@@ -70,7 +70,8 @@ A panel on the left next to any view; it hides and resizes (drag its edge).
 - When the chat is open, a narrow strip of avatars sits to its left: the supervisor, then chat sources (groups),
   then sessions ("Needs you", "Working", "Your move", the rest). A click or Alt+↑ / Alt+↓ switches the chat.
 - The badge on an avatar and in the list is the number of new agent replies since you last opened the chat (the
-  browser remembers this in `sya.chat.seen`); a red dot means the session is waiting for you.
+  browser remembers this in `sya.chat.seen`); a red dot means the session is waiting for you. The Chats button
+  adds them up for every chat outside the archive.
 - Select text in an agent message (in a session or group feed) and "Reply to this" appears above it (or press R):
   the selection goes into the input field as a `> …` quote, with the cursor after it.
 

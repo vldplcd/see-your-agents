@@ -93,7 +93,9 @@
     if (fresh.length) saveSeen();
   }
   const unread = (c) => (chat.seen && c.session_id !== chat.sid ? Math.max(0, (c.n_replies || 0) - (chat.seen[c.session_id] ?? (c.n_replies || 0))) : 0);
-  const totalUnread = () => (loadSeen(), adoptNew(state.board?.cards || []), state.board?.cards || []).reduce((n, c) => n + unread(c), 0)
+  // The archive is folded away in the list, so its replies are not news on the dock button.
+  const totalUnread = () => (loadSeen(), adoptNew(state.board?.cards || []), state.board?.cards || [])
+    .reduce((n, c) => n + (c.column === "archive" ? 0 : unread(c)), 0)
     + sourceItems().reduce((n, it) => n + (it.key === chat.sid ? 0 : it.unread || 0), 0);
   const badgeText = (n) => (n > 99 ? "99+" : String(n));
 

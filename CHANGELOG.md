@@ -11,6 +11,11 @@ All notable changes to this project are documented here. The format follows
 - A permission prompt for a call that names a session by its id (the supervisor's `stop_session`,
   `archive_session`, `send_to_session`) shows that session's title and project on the board, not only the id.
 
+### Fixed
+
+- The Chats button no longer counts new replies in archived sessions: the list folds the archive away, so the
+  number stayed after every visible chat was read.
+
 ## [0.1.2] - 2026-11-04
 
 ### Added
