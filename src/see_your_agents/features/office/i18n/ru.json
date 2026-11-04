@@ -2,6 +2,8 @@
   "office.title": "Офис",
   "office.no_project": "без проекта",
   "office.empty": "В офисе пусто: нет живых и недавних сессий.",
+  "office.new_session": "Новая сессия",
+  "office.new_session_in": "Новая сессия в {folder}",
   "office.plan": "План",
   "office.tasks_above": "выше ещё {n}",
   "office.tasks_below": "ниже ещё {n}",

@@ -57,6 +57,9 @@ pencil on a desk (or "Change" in the "Look" section of the session panel, or "Cu
 figure, color, desk, items on the desk and the agent's caption, one at a time or for the whole project. Looks are
 stored in `~/.config/see-your-agents/looks.json`.
 
+The empty desk with a plus at the end of a room opens "New session" with the room's folder filled in: the folder of
+its latest session outside a worktree. You can change it in the dialog.
+
 ## Conversation
 
 A panel on the left next to any view; it hides and resizes (drag its edge).

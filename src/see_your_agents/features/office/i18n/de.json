@@ -2,6 +2,8 @@
   "office.title": "Büro",
   "office.no_project": "kein Projekt",
   "office.empty": "Das Büro ist leer: keine laufenden oder kürzlichen Sitzungen.",
+  "office.new_session": "Neue Sitzung",
+  "office.new_session_in": "Neue Sitzung in {folder}",
   "office.plan": "Plan",
   "office.tasks_above": "{n} weitere oben",
   "office.tasks_below": "{n} weitere unten",

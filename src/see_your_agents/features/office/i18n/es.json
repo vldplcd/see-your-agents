@@ -2,6 +2,8 @@
   "office.title": "Oficina",
   "office.no_project": "sin proyecto",
   "office.empty": "La oficina está vacía: no hay sesiones activas ni recientes.",
+  "office.new_session": "Nueva sesión",
+  "office.new_session_in": "Nueva sesión en {folder}",
   "office.plan": "Plan",
   "office.tasks_above": "{n} más arriba",
   "office.tasks_below": "{n} más abajo",

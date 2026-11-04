@@ -6,6 +6,11 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- In the office, an empty desk at the end of each room starts a new session in that project: it opens New session
+  with the room's folder filled in.
+
 ### Changed
 
 - Sending from the chat no longer blocks the input. The message shows in the feed at once as "Sending…" while it is

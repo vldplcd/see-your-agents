@@ -1,7 +1,8 @@
 // Office: the sessions on a floor plan, a room per project and a desk per session, with a hover card. Desks,
 // captions and the toolbar come from looks.js (agentDeskSvg, agentLabel, officeToolbarHtml, afterOfficeRender).
-// Strings: office/i18n/<lang>.json through t(). Globals from app.js: $, esc, t, state, hash, liveLine, askText,
-// chips, progressBar, taskItems, waited, agoBack, can, spend, visibleCards, SYA. Exposes hidePeekNow for looks.js.
+// Strings: office/i18n/<lang>.json through t(). Globals from app.js: $, esc, t, state, prefs, hash, liveLine, askText,
+// chips, progressBar, taskItems, waited, agoBack, can, spend, visibleCards, SYA; from figures.js: DESKS. Exposes
+// hidePeekNow for looks.js. A room's empty desk opens New session in its folder through SYA.launch (optional).
 (() => {
   let peekId = null;
 
@@ -13,17 +14,35 @@
     const sorted = [...rooms.entries()].sort((a, b) =>
       Math.min(...a[1].map((c) => order[c.column])) - Math.min(...b[1].map((c) => order[c.column])) || b[1].length - a[1].length);
     const bubble = { needs_you: "!", working: "", your_move: "…", recent: "" };
-    $("#office").innerHTML = officeToolbarHtml() + (sorted.map(([name, list]) => `
-      <section class="room" style="--desks:${Math.min(list.length, 8)}"><span class="room-name">${esc(name || t("office.no_project"))}</span><span class="room-door"></span>
+    $("#office").innerHTML = officeToolbarHtml() + (sorted.map(([name, list]) => {
+      const plus = newDesk(list);
+      return `
+      <section class="room" style="--desks:${Math.min(list.length + (plus ? 1 : 0), 8)}"><span class="room-name">${esc(name || t("office.no_project"))}</span><span class="room-door"></span>
         <div class="desks">${list.sort((a, b) => order[a.column] - order[b.column]).map((c) => `
           <button class="desk d-${c.column}" data-id="${esc(c.session_id)}" aria-label="${esc(c.title)}: ${esc(liveLine(c))}" style="--blink:-${hash(c.session_id) % 7}s">
             ${bubble[c.column] ? `<span class="bubble">${bubble[c.column]}</span>` : ""}
             ${agentDeskSvg(c)}
             <div class="label">${agentLabel(c)}</div>
-          </button>`).join("")}
-        </div></section>`).join("") || `<p class="empty">${t("office.empty")}</p>`);
+          </button>`).join("")}${plus}
+        </div></section>`;
+    }).join("") || `<p class="empty">${t("office.empty")}</p>`);
     afterOfficeRender();
     if (peekId) drawPeek();
+  }
+
+  /* ---------- an empty desk: a new session in the room's folder ---------- */
+  // The room's most recent session outside a worktree says where the project is; the dialog lets you change it.
+  function roomFolder(list) {
+    const recent = [...list].sort((a, b) => (b.last_activity || "").localeCompare(a.last_activity || ""));
+    return (recent.find((c) => c.cwd && !c.worktree) || recent.find((c) => c.cwd))?.cwd || "";
+  }
+  function newDesk(list) {
+    const cwd = roomFolder(list);
+    if (!SYA.launch || !cwd) return "";  // the demo has no launch feature
+    const desk = DESKS[prefs.desk] || Object.values(DESKS)[0];
+    return `<button class="desk-new" type="button" data-launch-cwd="${esc(cwd)}" title="${esc(t("office.new_session_in", { folder: cwd }))}">
+      <svg viewBox="0 0 120 96" aria-hidden="true">${desk.under || ""}<g class="plus"><circle cx="60" cy="25" r="14"/><path d="M60 18v14M53 25h14"/></g>${desk.over}</svg>
+      <div class="label">${t("office.new_session")}</div></button>`;
   }
 
   /* ---------- hover card ---------- */
@@ -88,6 +107,10 @@
     });
   }
   office.addEventListener("focusin", (e) => { const d = e.target.closest(".desk"); if (d) showPeek(d.dataset.id); });
+  office.addEventListener("click", (e) => {
+    const b = e.target.closest(".desk-new");
+    if (b) SYA.launch?.open({ cwd: b.dataset.launchCwd });
+  });
   office.addEventListener("focusout", hidePeek);
   addEventListener("scroll", () => { if (peekId) hidePeekNow(); }, { passive: true });
   SYA.on("view", hidePeekNow);

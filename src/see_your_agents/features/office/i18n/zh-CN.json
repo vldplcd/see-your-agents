@@ -2,6 +2,8 @@
   "office.title": "办公室",
   "office.no_project": "无项目",
   "office.empty": "办公室里空无一人：没有活动的或最近的会话。",
+  "office.new_session": "新建会话",
+  "office.new_session_in": "在 {folder} 中新建会话",
   "office.plan": "计划",
   "office.tasks_above": "上方还有 {n} 项",
   "office.tasks_below": "下方还有 {n} 项",

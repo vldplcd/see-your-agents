@@ -14,6 +14,18 @@
 .desk .label { font-size: 11px; color: var(--ink-2); margin-top: 4px; line-height: 1.25; display: -webkit-box;
   -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .desk:hover .label { color: var(--ink); }
+/* the room's empty desk: New session in its folder, faint until the room is under the pointer */
+.desk-new { position: relative; width: 104px; border: 0; background: transparent; cursor: pointer; padding: 0; text-align: center;
+  color: var(--ink-3); opacity: .45; }
+.room:hover .desk-new, .desk-new:focus-visible { opacity: 1; }
+.desk-new:hover { color: var(--ink); }
+.desk-new svg { width: 104px; height: 83px; display: block; overflow: visible; }
+.desk-new .plus circle { fill: var(--sheet); stroke: currentColor; stroke-width: 1.6; stroke-dasharray: 4 3; }
+.desk-new .plus path { stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.desk-new .label { font-size: 11px; margin-top: 4px; line-height: 1.25; }
+.office.editing .desk-new { display: none; }
+@media (hover: none) { .desk-new { opacity: .8; } }
+@media (prefers-reduced-motion: no-preference) { .desk-new { transition: opacity .15s, color .15s; } }
 .bubble { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); font: 700 12px var(--display);
   background: var(--sheet); border: 1px solid var(--rule); border-radius: var(--radius-sm); padding: 0 6px; white-space: nowrap; }
 .d-needs_you .bubble { color: var(--on-needs); background: var(--needs); border-color: var(--needs); animation: hand 1s ease-in-out infinite alternate; }

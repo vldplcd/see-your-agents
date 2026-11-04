@@ -2,6 +2,8 @@
   "office.title": "Open space",
   "office.no_project": "sans projet",
   "office.empty": "L’open space est vide : aucune session active ou récente.",
+  "office.new_session": "Nouvelle session",
+  "office.new_session_in": "Nouvelle session dans {folder}",
   "office.plan": "Plan",
   "office.tasks_above": "{n} de plus au-dessus",
   "office.tasks_below": "{n} de plus en dessous",
