@@ -11,7 +11,7 @@
   const POLL_MS = 2500, PAGE = 60, PENDING_TTL_MS = 60000;
   const SEEN_KEY = "sya.chat.seen";
   const ORDER = ["needs_you", "working", "your_move", "recent"];
-  const ROUTE_WORD = { vscode: "VS Code", tmux: "tmux", resume: "claude --resume", takeover: t("chat.route.takeover"), peer: t("chat.route.peer") };
+  const ROUTE_WORD = { vscode: "VS Code", tmux: "tmux", attach: "claude attach", resume: "claude --resume", takeover: t("chat.route.takeover"), peer: t("chat.route.peer") };
   const RAIL_MAX = 24;
   // The courier's sender (core/providers/claude/routes.py SENDER): what the chat sent shows as the user's own.
   // Transcripts from before it was English name it «Дашборд».

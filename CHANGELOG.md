@@ -8,6 +8,12 @@ All notable changes to this project are documented here. The format follows
 
 ### Changed
 
+- A message from the chat to a background session (`claude --bg`, every session started with "+") is typed into
+  it through `claude attach`, as if you typed it in its terminal. Before, the courier delivered it as a message
+  from another session, and auto mode refused to act on it ("the request came from the dashboard, not from you").
+  It also takes about a second instead of 3–10, carries files, and reaches a session without a name. A text that
+  starts with `/`, `!` or `#` still goes by courier: typed, it would run as a command.
+
 - A permission prompt for a call that names a session by its id (the supervisor's `stop_session`,
   `archive_session`, `send_to_session`) shows that session's title and project on the board, not only the id.
 

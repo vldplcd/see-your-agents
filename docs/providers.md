@@ -18,7 +18,8 @@ src/see_your_agents/core/
       transcript.py transcript → Digest; transcripts(home)
       thread.py     transcript → chat messages (ClaudeThread)
       live.py       claude agents --json, the ~/.claude/sessions registry, jobs, tasks
-      routes.py     routes vscode, tmux, peer, resume, takeover; stop, focus; plug: the dashboard side
+      routes.py     routes vscode, tmux, attach, peer, resume, takeover; stop, focus; plug: the dashboard side
+      attach.py     the attach route: the text typed into a background session through `claude attach`
       courier.py    the courier: a one-off claude -p (haiku) calls SendMessage
       launch.py     claude --bg: options, start, fork, trusted; run, find_session, stop_job for the builder
     codex/        Codex CLI

@@ -20,7 +20,7 @@ import subprocess
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
-from ..base import Kind, LiveSession, TaskItem
+from ..base import Kind, LiveSession, Status, TaskItem
 from . import ID, courier
 
 ORPHAN_AFTER = timedelta(hours=1)  # a just-started job may point at a transcript not written yet
@@ -108,6 +108,18 @@ def read_live(home: Path) -> dict[str, LiveSession]:
             item.updated_at = job.get("updatedAt") or item.updated_at
         live[sid] = item
     return live
+
+
+def on_prompt(session_id: str) -> bool | None:
+    """`claude agents`, asked now, has the session on a permission prompt or a dialog; None: it does not list
+    the session. A background job that ended its turn with a question is only "blocked": text answers it."""
+    found = next((a for a in _agents_json() or () if a.get("sessionId") == session_id), None)
+    if found is None:
+        return None
+    status = found.get("status") or found.get("state") or ""
+    background = found.get("kind") in ("bg", Kind.BACKGROUND)
+    waiting = {Status.WAITING} if background else {Status.WAITING, Status.BLOCKED}
+    return bool(found.get("waitingFor")) or status in waiting
 
 
 def read_tasks(home: Path, session_id: str) -> list[TaskItem] | None:

@@ -25,7 +25,7 @@ def isolated(tmp_path, monkeypatch):
     monkeypatch.setenv("SYA_CACHE_DIR", str(tmp_path / "cache"))
     monkeypatch.setattr(claude_routes.shutil, "which", lambda n: "/usr/bin/claude")
     claude_routes.reset_caches()
-    claude_routes._couriers.clear()
+    claude_routes._sending.clear()
     yield
     claude_routes.reset_caches()
 
@@ -120,9 +120,10 @@ def test_unnamed_session_keeps_the_takeover():
     assert (r.route, r.alt) == ("takeover", None)
 
 
-def background(status="idle", **extra):
+def background(status="idle", job_id="", **extra):
+    """A background session without its job id: `claude attach` cannot reach it (test_claude_attach.py)."""
     return LiveSession(
-        provider="claude", session_id=SID, kind="background", status=status, job_id="ab12cd34", **extra
+        provider="claude", session_id=SID, kind="background", status=status, job_id=job_id, **extra
     )
 
 
@@ -134,13 +135,14 @@ def test_named_background_session_gets_the_courier_and_no_takeover():
 
 def test_background_session_on_a_permission_prompt_or_unnamed_points_to_claude_attach():
     # what `claude agents --json` gave for a bg job on a Write prompt (Claude Code 2.1.317)
-    asking = background("waiting", name="w", waiting_for="permission prompt", needs="approve Write: /x")
+    asking = background("waiting", "ab12cd34", name="w", waiting_for="permission prompt", needs="approve x")
     made_up = background(name="bg-1f2e", name_source="auto")
 
     for session in (asking, background(), made_up):
         r = claude_routes.route_for(session, "/", False, False, snap())
         assert (r.route, r.can_send) == (None, False)
-        assert "claude attach ab12cd34" in r.why()
+        assert "claude attach" in r.why()
+    assert "claude attach ab12cd34" in claude_routes.route_for(asking, "/", False, False, snap()).why()
 
 
 def test_background_session_that_ended_its_turn_with_a_question_gets_the_courier():

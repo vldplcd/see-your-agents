@@ -3,14 +3,17 @@
 Routes of a message the user writes in the chat (decided per session, see `route_for`):
   vscode  the session is a live `claude` in a VS Code terminal: the bridge extension pastes the text
   tmux    a live `claude` inside tmux: tmux paste-buffer (bracketed) + Enter
-  peer    a live, named `claude` nothing can type into, or a named background one (`claude --bg`): the
-          courier sends the text as a peer message (text only; the agent answers in its own session)
+  attach  a background session (`claude --bg`): the text is typed into it through `claude attach <job>`, as
+          the user's own words (attach.py)
+  peer    a live, named `claude` nothing can type into: the courier sends the text as a peer message (text
+          only; the agent answers in its own session)
   resume  not running: one `claude -p --resume <id>` turn, appended to the same transcript
   takeover  a live, idle `claude` in a terminal nothing can type into: stop it there (SIGTERM), then resume;
           only with an explicit confirmation in the request, since it closes the terminal's session.
           Offered as the secondary action (`alt`) next to `peer`, and the main one for an unnamed session
 A signed message (`Message.sender`: a group, the morning review) is never typed into a terminal: a live
-session gets it by courier under the sender's name, a stopped one by a resume turn.
+session gets it by courier under the sender's name, a stopped one by a resume turn. Nor is a text Claude Code
+would run as a command ("/", "!", "#" first): a named session gets it by courier.
 Text is never sent to a session that waits on a permission prompt or dialog: it would land in the dialog.
 A background session has no terminal of its own: the prompt is answered after `claude attach <job id>`.
 
@@ -28,7 +31,8 @@ import signal
 import subprocess
 import threading
 import time
-from collections.abc import Callable, Mapping, Sequence
+from collections.abc import Callable, Iterator, Mapping, Sequence
+from contextlib import contextmanager
 from dataclasses import dataclass, replace
 from datetime import UTC, datetime
 from pathlib import Path
@@ -51,7 +55,7 @@ from ..base import (
     Session,
     Status,
 )
-from . import ID, courier
+from . import ID, attach, courier
 from .live import registry_by_pid
 from .paths import claude_home
 from .transcript import REPLY_NOTE
@@ -71,6 +75,7 @@ UNPLUGGED = "app.provider.claude.unplugged"
 NO_CLAUDE = "app.provider.claude.no_claude"
 WAITING_PROMPT = "app.provider.claude.waiting"
 NAMESAKES = "app.provider.claude.namesakes"
+COMMAND_TEXT = "app.provider.claude.command_text"
 
 
 class Terminals(Protocol):
@@ -183,7 +188,7 @@ def _tmux_target(reg: dict) -> str:
 # ---- turns and deliveries in flight -----------------------------------------------------------
 
 _runs: dict[str, subprocess.Popen] = {}
-_couriers: set[str] = set()  # sessions with a chat message on its way by courier
+_sending: set[str] = set()  # sessions with a chat message on its way by courier or attach
 _runs_lock = threading.Lock()
 
 
@@ -252,17 +257,27 @@ def route_for(
 
 
 def _background_route(live: LiveSession) -> Route:
-    """A `claude --bg` session: the courier reaches it by name; a permission prompt waits for a terminal.
+    """A `claude --bg` session: the text is typed into it by `claude attach`; a permission prompt waits for a
+    terminal. Without its job id only the courier reaches it, by name.
 
     Seen with Claude Code 2.1.317: on a permission prompt `claude agents` gives status "waiting" and
     waitingFor "permission prompt" (state "blocked"); a job that ended its turn with a question is only
     "blocked", with its `needs` ("confirm: …") and no waitingFor, and a message answers it."""
-    attach = f"claude attach {live.job_id}" if live.job_id else "claude attach"
     if live.waiting_for or live.status == Status.WAITING:
-        return Route(None, False, "app.provider.claude.bg_waiting", params={"attach": attach})
+        return Route(None, False, "app.provider.claude.bg_waiting", params={"attach": _attach_command(live)})
+    if live.job_id and shutil.which("claude"):
+        return Route("attach", True, "app.provider.claude.bg_attach", live.job_id)
+    return _background_peer(live)
+
+
+def _background_peer(live: LiveSession) -> Route:
     if not live.address:
-        return Route(None, False, "app.provider.claude.bg_unnamed", params={"attach": attach})
+        return Route(None, False, "app.provider.claude.bg_unnamed", params={"attach": _attach_command(live)})
     return Route("peer", True, "app.provider.claude.bg_peer", live.address)
+
+
+def _attach_command(live: LiveSession) -> str:
+    return f"claude attach {live.job_id}" if live.job_id else "claude attach"
 
 
 def _namesakes(name: str) -> int:
@@ -416,18 +431,25 @@ def _signed_by_courier(to: str, message: Message) -> Sent:
     return Sent("peer", msg_id=result.msg_id)
 
 
-def _chat_by_courier(session_id: str, to: str, message: Message) -> Sent:
-    """The courier for a chat message: one at a time per session (3-10 s, in the request's own thread). The
-    page sends a session's messages in order, so a second one at once comes only from another tab."""
+@contextmanager
+def _one_at_a_time(session_id: str) -> Iterator[None]:
+    """One chat message on its way per session, in the request's own thread. The page sends a session's
+    messages in order, so a second one at once comes only from another tab."""
     with _runs_lock:
-        if session_id in _couriers:
+        if session_id in _sending:
             raise SendRefused("app.provider.claude.sending")
-        _couriers.add(session_id)
+        _sending.add(session_id)
     try:
-        result = _by_courier(to, message, SENDER)
+        yield
     finally:
         with _runs_lock:
-            _couriers.discard(session_id)
+            _sending.discard(session_id)
+
+
+def _chat_by_courier(session_id: str, to: str, message: Message) -> Sent:
+    """The courier for a chat message (3-10 s)."""
+    with _one_at_a_time(session_id):
+        result = _by_courier(to, message, SENDER)
     if not result.ok:  # in the request's thread: the reason is worded in its language
         raise SendError(
             "app.provider.claude.not_delivered", reason=message_of(result.problem(), request_lang())
@@ -445,6 +467,12 @@ def send(session: Session, message: Message) -> Sent:
     assert live is not None  # every other route is to a live session
     if message.sender:
         return _signed_by_courier(str(found.target), message)
+    if found.route == "attach" and not attach.typeable(message.text):
+        found = _background_peer(live)
+        if not found.can_send:
+            raise SendRefused(COMMAND_TEXT)
+    if found.route == "attach":
+        return _by_attach(live, message)
     if found.route == "peer" and not message.takeover:
         if message.files:
             raise SendInvalid("app.provider.claude.text_only")
@@ -470,6 +498,16 @@ def send(session: Session, message: Message) -> Sent:
     else:
         _tmux_paste(str(found.target), compose(message))
     return Sent(found.route)
+
+
+def _by_attach(live: LiveSession, message: Message) -> Sent:
+    """Typed into a background session (1-2 s): the user's own words, with the files as @-mentions."""
+    exe = shutil.which("claude")
+    if not exe:
+        raise SendError(NO_CLAUDE)
+    with _one_at_a_time(live.session_id):
+        attach.type_into(exe, live.job_id, live.session_id, compose(message))
+    return Sent("attach")
 
 
 def stop(session: Session) -> None:

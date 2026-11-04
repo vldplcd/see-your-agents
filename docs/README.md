@@ -23,6 +23,8 @@
 Verified facts about the agent programs the code depends on, with how each was checked:
 
 - [notes/claude-hooks-notes.md](notes/claude-hooks-notes.md): Claude Code's `PermissionRequest` hook.
+- [notes/claude-attach-notes.md](notes/claude-attach-notes.md): typing into a background session through
+  `claude attach`.
 - [notes/claude-sandbox-notes.md](notes/claude-sandbox-notes.md): Claude Code's Bash sandbox and `sandbox-exec`, for
   the builder.
 - [notes/codex-cli-notes.md](notes/codex-cli-notes.md): Codex CLI's files, its daemon's RPC, sending and launching.
