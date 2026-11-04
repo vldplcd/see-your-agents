@@ -177,7 +177,7 @@ def _recorded(path: Path | None, offset: int, text: str) -> bool:
     return False
 
 
-def _free(session_id: str, attach: str, typed: bool) -> None:
+def _not_on_prompt(session_id: str, attach: str, typed: bool) -> None:
     """Raise unless the session is running and not on a prompt, where Enter would answer the dialog."""
     waiting = on_prompt(session_id)
     if waiting is None:
@@ -204,12 +204,12 @@ def type_into(exe: str, job_id: str, session_id: str, text: str) -> None:
                 raise SendError("app.provider.claude.attach_failed", error=lines[-1] if lines else "")
             raise SendTimeout("app.provider.claude.attach_no_input", s=f"{READY_S:.0f}")
         time.sleep(SETTLE_S)
-        _free(session_id, attach, typed=False)
+        _not_on_prompt(session_id, attach, typed=False)
         mark, tail = len(client.out), _squash(text)[-TAIL:]
         client.write(keystrokes(text))
         if not client.wait_for(lambda: tail in _squash(client.screen(mark)), DRAWN_S):
             raise SendError("app.provider.claude.attach_not_drawn", s=f"{DRAWN_S:.0f}", attach=attach)
-        _free(session_id, attach, typed=True)
+        _not_on_prompt(session_id, attach, typed=True)
         client.write(b"\r")
 
         def recorded() -> bool:
