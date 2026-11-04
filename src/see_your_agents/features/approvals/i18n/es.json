@@ -11,7 +11,7 @@
   "approvals.no_text": "sin texto",
   "approvals.unpaired": "Esta pestaña no está vinculada: no puedes responder desde aquí, solo en la terminal o desde una pestaña vinculada.",
   "approvals.pair_elsewhere": "Abrir el panel en 127.0.0.1 para vincular este navegador",
-  "approvals.pair_opened": "Se abrió una pestaña nueva: confirma allí la vinculación y responde desde ella. La vinculación vale en la pestaña que la confirmó, hasta que el panel se reinicie.",
+  "approvals.pair_opened": "Se abrió una pestaña nueva: confirma allí la vinculación y responde desde ella. ¿No se abrió? Abre el enlace que sya serve escribió en la terminal. La vinculación vale en la pestaña que la confirmó, hasta que el panel se reinicie.",
   "approvals.unpaired_all": "Todas las pestañas están desvinculadas.",
   "approvals.failed": "No funcionó.",
   "approvals.prefs.legend": "Responder solicitudes de permiso",

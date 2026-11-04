@@ -11,7 +11,7 @@
   "approvals.no_text": "sans texte",
   "approvals.unpaired": "Cet onglet n’est pas associé : vous ne pouvez pas répondre d’ici, seulement dans le terminal ou depuis un onglet associé.",
   "approvals.pair_elsewhere": "Ouvrir le tableau de bord sur 127.0.0.1 pour associer ce navigateur",
-  "approvals.pair_opened": "Un nouvel onglet est ouvert : confirmez-y l’association et répondez depuis celui-ci. L’association vaut pour l’onglet qui l’a confirmée, jusqu’au redémarrage du tableau de bord.",
+  "approvals.pair_opened": "Un nouvel onglet est ouvert : confirmez-y l’association et répondez depuis celui-ci. Pas d’onglet ? Ouvrez le lien que sya serve a affiché dans le terminal. L’association vaut pour l’onglet qui l’a confirmée, jusqu’au redémarrage du tableau de bord.",
   "approvals.unpaired_all": "Tous les onglets sont dissociés.",
   "approvals.failed": "Cela n’a pas fonctionné.",
   "approvals.prefs.legend": "Réponses aux demandes d’autorisation",

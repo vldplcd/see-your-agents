@@ -25,13 +25,16 @@ Where things live, and why:
 
 The code: 32 random bytes, 2 minutes, one at a time, used up only by an exact match; a new tab at most once a
 minute. Opening the browser keeps the code out of every process's argv (other users can list those): on macOS
-`osascript` reads `open location` from stdin. Elsewhere there is no such way yet, so pairing is refused.
+`osascript` reads `open location` from stdin; elsewhere the opener (xdg-open and the like) gets a page that
+only this user can read and that sends the browser on (`redirect_page`). Each start also prints the link to
+the terminal running `sya serve`, when it is one (never into a log file): the way in over SSH, without a
+desktop, or from a browser the opener did not pick.
 
 Not protected against (the residual risk): whoever takes the port while the dashboard is off and waits for the
 page to be opened once in that window can plant a service worker and steal the next pairing. That takes a
 process of this user (which could simply put allow-all into ~/.claude/settings.json) or of another user of the
-Mac; the real fix is a port that is always held (launchd, later). Nor against a process of the same user that
-drives the browser's UI or reads its memory, or a person who confirms a pairing they did not start. See
+machine; the real fix is a port that is always held (launchd, later). Nor against a process of the same user
+that drives the browser's UI or reads its memory, or a person who confirms a pairing they did not start. See
 docs/ARCHITECTURE.md, "Security".
 """
 
@@ -42,12 +45,16 @@ import hmac
 import os
 import secrets
 import shlex
+import shutil
 import subprocess
 import sys
+import tempfile
 import threading
 import time
+import webbrowser
 from collections.abc import Callable
 from http import HTTPStatus
+from pathlib import Path
 
 from ..i18n import Problem
 
@@ -62,17 +69,41 @@ def _sha(text: str) -> str:
     return hashlib.sha256(text.encode()).hexdigest()
 
 
-def supported() -> bool:
-    return bool(os.environ.get(OPENER_ENV)) or sys.platform == "darwin"
-
-
 def open_browser(url: str) -> None:
-    """The default browser at `url`, the URL kept out of every argv: `osascript` reads it from stdin."""
+    """The default browser at `url`, the URL kept out of every argv. Without a desktop (an SSH session)
+    nothing opens: the terminal has the link."""
     if command := os.environ.get(OPENER_ENV):
         subprocess.run(shlex.split(command), input=url, text=True, timeout=10, check=False)
-    else:
+    elif sys.platform == "darwin":
         script = f'open location "{url}"'  # the URL is [A-Za-z0-9:/._#=-] only: no quote to escape
         subprocess.run(["osascript", "-"], input=script, text=True, timeout=10, check=False)
+    elif os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY"):
+        webbrowser.open(redirect_page(url).as_uri())
+
+
+def redirect_page(url: str) -> Path:
+    """A page that sends the browser on to `url`, in a new folder only this user can open (0700): the opener
+    gets its path, not the code. It goes once the code has expired. A browser that cannot read it (a snap's
+    has its own /tmp) leaves the terminal's link."""
+    folder = Path(tempfile.mkdtemp(prefix="sya-pair-"))
+    page = folder / "pair.html"
+    page.write_text(
+        f'<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0;url={url}">\n'
+        f'<script>location.replace("{url}")</script>\n',
+        encoding="utf-8",
+    )
+    cleanup = threading.Timer(CODE_TTL_S, shutil.rmtree, (folder,), {"ignore_errors": True})
+    cleanup.daemon = True
+    cleanup.start()
+    return page
+
+
+def tell_terminal(url: str) -> None:
+    """The link on the terminal running `sya serve`, when stderr is one: a terminal is its user's, a log file
+    may not be."""
+    if sys.stderr.isatty():
+        minutes = int(CODE_TTL_S // 60)
+        print(f"Pair a browser: {url}  (one use, within {minutes} minutes)", file=sys.stderr, flush=True)
 
 
 class PairingError(Problem):
@@ -110,15 +141,15 @@ class Pairing:
 
     def start(self) -> None:
         """Open the browser at the dashboard with a fresh code; PairingError when it cannot be now."""
-        if not supported():
-            raise PairingError("app.pair.unsupported")
         with self._lock:
             now = self._clock()
             if self._last_start is not None and now - self._last_start < START_EVERY_S:
                 left = int(START_EVERY_S - (now - self._last_start)) + 1
                 raise PairingError("app.pair.too_soon", n=left)
             self._last_start = now
-        (self.opener or open_browser)(f"{self.origin}/#pair={self.new_code()}")
+        url = f"{self.origin}/#pair={self.new_code()}"
+        tell_terminal(url)
+        (self.opener or open_browser)(url)
 
     def redeem(self, code: object) -> str | None:
         """The secret for the open, unexpired code. Only that code uses it up; a wrong guess leaves it."""

@@ -20,7 +20,6 @@ import sys
 import time
 import urllib.error
 import urllib.request
-import webbrowser
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -28,7 +27,7 @@ from ..core import providers
 from ..core.index import Index, default_db_path
 from ..core.sessions import COLUMNS, build_board
 from ..features import FEATURES
-from . import mcp, pairing, watchdog
+from . import mcp, watchdog
 
 
 def _ago(ts: str) -> str:
@@ -160,10 +159,8 @@ def main(argv: list[str] | None = None) -> None:
         httpd = serve(index, args.port, FEATURES)
         url = f"http://127.0.0.1:{args.port}/"
         print(f"see-your-agents on {url}  (Ctrl+C to stop)")
-        if not args.no_open and pairing.supported():
+        if not args.no_open:
             httpd.app.pairing.start()  # each process starts unpaired: it opens the page with a pairing code
-        elif not args.no_open:
-            webbrowser.open(url)
         watchdog.exit_with_parent()
         with contextlib.suppress(KeyboardInterrupt):
             httpd.serve_forever()

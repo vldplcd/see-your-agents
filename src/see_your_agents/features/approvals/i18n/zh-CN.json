@@ -11,7 +11,7 @@
   "approvals.no_text": "无文本",
   "approvals.unpaired": "此标签页未配对：无法在这里回答，只能在终端或已配对的标签页中回答。",
   "approvals.pair_elsewhere": "在 127.0.0.1 上打开仪表盘以配对此浏览器",
-  "approvals.pair_opened": "已打开一个新标签页：请在那里确认配对，并在其中回答。配对只在确认它的标签页中有效，直到仪表盘重启。",
+  "approvals.pair_opened": "已打开一个新标签页：请在那里确认配对，并在其中回答。没有打开？请打开 sya serve 在终端里打印的链接。配对只在确认它的标签页中有效，直到仪表盘重启。",
   "approvals.unpaired_all": "所有标签页均已取消配对。",
   "approvals.failed": "操作失败。",
   "approvals.prefs.legend": "回应权限请求",

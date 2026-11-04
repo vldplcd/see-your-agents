@@ -11,7 +11,7 @@
   "approvals.no_text": "ohne Text",
   "approvals.unpaired": "Dieser Tab ist nicht gekoppelt: Von hier aus kannst du nicht antworten, nur im Terminal oder aus einem gekoppelten Tab.",
   "approvals.pair_elsewhere": "Dashboard auf 127.0.0.1 öffnen, um diesen Browser zu koppeln",
-  "approvals.pair_opened": "Ein neuer Tab ist offen: Bestätige dort die Kopplung und antworte von dort aus. Die Kopplung gilt in dem Tab, der sie bestätigt hat, bis zum Neustart des Dashboards.",
+  "approvals.pair_opened": "Ein neuer Tab ist offen: Bestätige dort die Kopplung und antworte von dort aus. Kein Tab? Öffne den Link, den sya serve im Terminal ausgegeben hat. Die Kopplung gilt in dem Tab, der sie bestätigt hat, bis zum Neustart des Dashboards.",
   "approvals.unpaired_all": "Alle Tabs sind entkoppelt.",
   "approvals.failed": "Das hat nicht geklappt.",
   "approvals.prefs.legend": "Berechtigungsanfragen beantworten",

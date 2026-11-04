@@ -11,7 +11,7 @@
   "approvals.no_text": "no text",
   "approvals.unpaired": "This tab isn’t paired: you can’t answer from here, only in the terminal or from a paired tab.",
   "approvals.pair_elsewhere": "Open the dashboard on 127.0.0.1 to pair this browser",
-  "approvals.pair_opened": "A new tab is open: confirm the pairing there and answer from it. The pairing holds in the tab that confirmed it, until the dashboard restarts.",
+  "approvals.pair_opened": "A new tab is open: confirm the pairing there and answer from it. No tab? Open the link printed in the terminal running sya serve. The pairing holds in the tab that confirmed it, until the dashboard restarts.",
   "approvals.unpaired_all": "All tabs are unpaired.",
   "approvals.failed": "That didn’t work.",
   "approvals.prefs.legend": "Answering permission requests",

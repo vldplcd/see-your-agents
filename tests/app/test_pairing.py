@@ -2,27 +2,30 @@
 page keeps in localStorage and sends as X-SYA-Pair: the proof that a request comes from a person at the page,
 not from a process that forges headers, a page on another port, or whatever answers on localhost."""
 
+import io
 import json
 import re
+import shutil
+import stat
 import threading
 import urllib.error
 import urllib.request
 from http.server import ThreadingHTTPServer
+from pathlib import Path
+from urllib.parse import unquote, urlparse
 
 import pytest
 from fakes import FakeApp, FakeIndex, no_processes
 
 from see_your_agents import config_dir
 from see_your_agents.app import pairing, server
+from see_your_agents.app.pairing import open_browser  # conftest replaces the module's, to record tabs
 
 
 @pytest.fixture(autouse=True)
 def quiet(monkeypatch):
     no_processes(monkeypatch)
     monkeypatch.setattr(pairing, "START_EVERY_S", 0)
-    # The flow is the same on every OS; only opening the browser is macOS's, and conftest records the tab
-    # instead. A configured opener makes pairing supported elsewhere too, so these tests run on Linux CI.
-    monkeypatch.setenv(pairing.OPENER_ENV, "unused")
 
 
 def serve(app):
@@ -143,13 +146,49 @@ def test_a_pairing_tab_opens_at_most_once_a_minute(monkeypatch, opened_tabs):
     assert len(opened_tabs) == 2
 
 
-def test_pairing_is_refused_off_macos(base, opened_tabs, monkeypatch):
+class Terminal(io.StringIO):
+    def isatty(self):
+        return True
+
+
+def test_off_macos_the_opener_gets_a_page_only_this_user_can_read_not_the_code(monkeypatch):
+    """xdg-open takes its target as an argument, and other users can list arguments."""
     monkeypatch.setattr(pairing.sys, "platform", "linux")
     monkeypatch.delenv(pairing.OPENER_ENV, raising=False)
-    status, _, body = call(f"{base}/api/pair/start", {}, page(base))
-    assert status == 409 and "only on macOS" in json.loads(body)["error"] and opened_tabs == []
-    russian = {**page(base), "X-SYA-Lang": "ru"}  # the page's language words the refusal
-    assert "только на macOS" in json.loads(call(f"{base}/api/pair/start", {}, russian)[2])["error"]
+    monkeypatch.setenv("DISPLAY", ":0")
+    opened = []
+    monkeypatch.setattr(pairing.webbrowser, "open", opened.append)
+    url = "http://127.0.0.1:8765/#pair=" + "c" * 43
+    open_browser(url)
+    [target] = opened
+    page = Path(unquote(urlparse(target).path))
+    try:
+        assert "pair=" not in target and url in page.read_text()
+        assert stat.S_IMODE(page.parent.stat().st_mode) == 0o700
+    finally:
+        shutil.rmtree(page.parent)
+
+
+def test_without_a_desktop_nothing_opens(monkeypatch):
+    monkeypatch.setattr(pairing.sys, "platform", "linux")
+    for name in (pairing.OPENER_ENV, "DISPLAY", "WAYLAND_DISPLAY"):
+        monkeypatch.delenv(name, raising=False)
+    opened = []
+    monkeypatch.setattr(pairing.webbrowser, "open", opened.append)
+    open_browser("http://127.0.0.1:8765/#pair=" + "c" * 43)
+    assert opened == []
+
+
+def test_the_link_goes_to_a_terminal_but_never_into_a_log(monkeypatch, opened_tabs):
+    """Over SSH or without a desktop the terminal is the way in; a log file may be readable by others."""
+    terminal = Terminal()
+    monkeypatch.setattr(pairing.sys, "stderr", terminal)
+    pairing.Pairing(8765).start()
+    assert opened_tabs[0] in terminal.getvalue()
+    log = io.StringIO()
+    monkeypatch.setattr(pairing.sys, "stderr", log)
+    pairing.Pairing(8765).start()
+    assert log.getvalue() == "" and len(opened_tabs) == 2
 
 
 def test_a_restart_forgets_every_pairing(opened_tabs):
