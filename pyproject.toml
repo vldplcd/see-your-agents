@@ -1,6 +1,6 @@
 [project]
 name = "see-your-agents"
-version = "0.1.0"
+version = "0.1.1"
 description = "A local dashboard for Claude Code and Codex CLI sessions: who is working, who is waiting for you, what happened"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -14,6 +14,7 @@ Documentation = "https://github.com/vldplcd/see-your-agents/tree/main/docs"
 
 [project.scripts]
 sya = "see_your_agents.app.cli:main"
+see-your-agents = "see_your_agents.app.cli:main"  # so that `uvx see-your-agents` finds a command
 
 [dependency-groups]
 dev = ["pytest>=8", "ruff>=0.6"]
@@ -24,6 +25,9 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/see_your_agents"]
+
+[tool.hatch.build.targets.sdist]
+exclude = ["docs/images"]  # the README's pictures, about 2 MB
 
 [tool.ruff]
 line-length = 110

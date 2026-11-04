@@ -6,6 +6,15 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-11-04
+
+### Added
+
+- `uvx see-your-agents serve` tries the dashboard without installing it: the package now has a `see-your-agents`
+  command, the same as `sya`.
+- A live demo on GitHub Pages (https://vldplcd.github.io/see-your-agents/), rebuilt from `main`, and screenshots and a
+  GIF in the README. In the demo you can answer a permission prompt from the board.
+
 ## [0.1.0] - 2026-11-04
 
 The first public release.
@@ -45,5 +54,6 @@ The first public release.
 - **Providers.** Claude Code and Codex sit behind one provider interface, so another agent CLI is a folder plus a
   registry line.
 
-[Unreleased]: https://github.com/vldplcd/see-your-agents/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/vldplcd/see-your-agents/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/vldplcd/see-your-agents/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/vldplcd/see-your-agents/releases/tag/v0.1.0

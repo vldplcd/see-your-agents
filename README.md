@@ -39,6 +39,8 @@ A permission prompt answered from the board; the terminal's dialog stays open, a
 ## Quick start
 
 ```bash
+uvx see-your-agents serve           # try it without installing
+
 uv tool install see-your-agents     # or: pipx install see-your-agents
 sya serve                           # http://127.0.0.1:8765, opens a browser tab
 sya ls                              # the same board in the terminal (--all adds the archive)

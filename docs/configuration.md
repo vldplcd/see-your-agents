@@ -28,6 +28,11 @@ permission hook and the VS Code bridge, and where the dashboard reads and writes
 
 ## Commands
 
+From a checkout the commands run through `uv run`; installed with `uv tool install` or pipx, drop it.
+`see-your-agents` is the same command as `sya`, so `uvx see-your-agents serve` runs the dashboard without installing
+it. `sya hooks install` writes the path of the Python that runs it into Claude Code's settings, so run it from a
+checkout or an installed copy, not through `uvx`, whose environments are temporary.
+
 | Command | What it does |
 |---|---|
 | `uv run sya serve` | the dashboard at `http://127.0.0.1:8765`; opens a browser tab with a pairing code. `--port N` picks another port, `--no-open` opens no tab. It runs as a watchdog that restarts the server after a build is accepted or rolled back |
